@@ -1,0 +1,25 @@
+{
+  "app_name": "Fterm",
+  "settings": "Settings",
+  "select_lang": "Language",
+  "general": "General",
+  "theme": "Theme",
+  "hosts": "Hosts",
+  "keys": "SSH Keys",
+  "system": "System Language",
+  "en_US": "English",
+  "zh_CN": "简体中文",
+  "copy": "Copy",
+  "paste": "Paste",
+  "new_tab": "New Tab",
+  "received_file": "Received {filename}",
+  "@received_file": {
+    "placeholders": {
+      "filename": {
+        "type": "String",
+        "example": "example.png"
+      }
+    }
+  },
+  "sync": "Sync"
+}

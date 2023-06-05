@@ -1,0 +1,5 @@
+display_name: fterm
+publisher_display_name: henjue
+identity_name: com.github.springeye.fterm
+msix_version: 0.0.0.1
+logo_path: assets/terminal.png

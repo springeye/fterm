@@ -1,0 +1,8 @@
+script_template: inno_setup.iss
+
+app_id: com.github.springeye.fterm
+publisher: henjue
+publisher_url: https://github.com/springeye/fterm
+display_name: fterm
+create_desktop_icon: true
+install_dir_name: "{userpf}/fterm"
