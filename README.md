@@ -20,3 +20,8 @@ fterm是一款基于Flutter开发的跨平台终端工具
 ![fterm4](resources/fterm4.png)
 ![fterm5](resources/fterm5.png)
 ![fterm6](resources/fterm6.png)
+
+
+## Special thanks to the following items which helped me a lot
+[https://github.com/TerminalStudio]()  
+[https://github.com/Eugeny/tabby]()
