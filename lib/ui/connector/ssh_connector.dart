@@ -3,14 +3,15 @@ import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fterm/di/di.dart';
 import 'package:fterm/model/ssh_config.dart';
 import 'package:fterm/ui/connector/connector.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class SSHConnector extends Connector {
   final SSHConfig config;
-  final SSHConfig? jumpServer;
 
-  SSHConnector(this.config, {this.jumpServer});
+  SSHConnector(this.config);
 
   final _outputController = StreamController<Uint8List>();
   late SSHSession _session;
@@ -20,21 +21,26 @@ class SSHConnector extends Connector {
   @override
   Future<void> connect() async {
     SSHSocket sshSocket;
+    var box = getIt<Box<SSHConfig>>();
+    SSHConfig? jumpServer = box.values
+        .where((element) => element.id == config.jumpServer)
+        .firstOrNull;
     if (jumpServer != null) {
       _jmpServer =
-          await SSHSocket.connect(jumpServer!.host, jumpServer!.port).then(
+          await SSHSocket.connect(jumpServer.host, jumpServer.port).then(
         (jmpSocket) => SSHClient(
           jmpSocket,
-          username: jumpServer!.username,
+          username: jumpServer.username,
           identities: [
-            ...(jumpServer!.privateKey != null
+            ...(jumpServer.privateKey != null &&
+                    jumpServer.privateKey!.trim().isNotEmpty
                 ? SSHKeyPair.fromPem(
-                    jumpServer!.privateKey!,
-                    jumpServer!.passphrase,
+                    jumpServer.privateKey!.trim(),
+                    jumpServer.passphrase,
                   )
                 : [])
           ],
-          onPasswordRequest: () => jumpServer!.password,
+          onPasswordRequest: () => jumpServer.password,
         ),
       );
       sshSocket = await _jmpServer!.forwardLocal(config.host, config.port);
@@ -46,9 +52,9 @@ class SSHConnector extends Connector {
       sshSocket,
       username: config.username,
       identities: [
-        ...(config.privateKey != null
+        ...(config.privateKey != null && config.privateKey!.trim().isNotEmpty
             ? SSHKeyPair.fromPem(
-                config.privateKey!,
+                config.privateKey!.trim(),
                 config.passphrase,
               )
             : [])

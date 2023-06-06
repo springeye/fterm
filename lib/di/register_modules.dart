@@ -33,9 +33,9 @@ abstract class RegisterModule {
     final key = await secureStorage.read(key: 'hive');
     final encryptionKeyUint8List = base64Url.decode(key!);
     print('Encryption key Uint8List: $encryptionKeyUint8List');
-
     var box = await Hive.openBox<SSHConfig>('ssh',
         encryptionCipher: HiveAesCipher(encryptionKeyUint8List));
+    print(box.path);
     // await box.clear();
     return box;
   }

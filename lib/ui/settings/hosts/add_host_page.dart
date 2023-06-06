@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fterm/bloc/ssh_config_bloc.dart';
 import 'package:fterm/di/di.dart';
@@ -46,6 +47,7 @@ class _PortTextInputFormatter extends TextInputFormatter {
 
 class _AddHostPageState extends State<AddHostPage> {
   AuthType _authType = AuthType.auto;
+  ConnectType _connectType = ConnectType.direct;
   final TextEditingController _keyController = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey();
   late SSHConfig config;
@@ -60,11 +62,15 @@ class _AddHostPageState extends State<AddHostPage> {
             username: "",
             port: 22);
     _keyController.text = config.privateKey ?? "";
+    if (config.jumpServer != null || config.jumpServer?.isNotEmpty == true) {
+      _connectType = ConnectType.proxy;
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var hosts = context.watch<SshConfigBloc>().state.configs;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.config == null ? "添加主机" : "修改主机"),
@@ -91,6 +97,79 @@ class _AddHostPageState extends State<AddHostPage> {
             key: _globalKey,
             child: ListView(
               children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 0, bottom: 10),
+                    child: Row(
+                      children: [
+                        const Text("连接方式:"),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: RadioFormGroup<ConnectType>(
+                            _connectType,
+                            onChanged: (value) {
+                              //rebuild current form field
+                              setState(() {
+                                _connectType = value ?? ConnectType.direct;
+                              });
+                            },
+                            items: const [
+                              RadioItem<ConnectType>(
+                                ConnectType.direct,
+                                title: Text("直连"),
+                              ),
+                              RadioItem<ConnectType>(
+                                ConnectType.proxy,
+                                title: Text("代理"),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                if (_connectType == ConnectType.proxy)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: DropdownButtonFormField<String>(
+                      value: config.jumpServer,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).hintColor,
+                          ),
+                        ),
+                        border: const OutlineInputBorder(),
+                        labelText: "代理主机",
+                      ),
+                      items: hosts
+                          .map((e) => DropdownMenuItem<String>(
+                                value: e.id,
+                                child: Text(
+                                    "${e.title}(${e.username}@${e.host}:${e.port})"),
+                              ))
+                          .toList(),
+                      onChanged: (String? value) {},
+                      validator: (v) {
+                        if (_connectType == ConnectType.proxy) {
+                          if (v == null || v.isEmpty) {
+                            return "必须选择一个代理主机";
+                          }
+                        }
+                        return null;
+                      },
+                      onSaved: (v) {
+                        if (_connectType == ConnectType.proxy) {
+                          config.jumpServer = v!;
+                        } else {
+                          config.jumpServer = null;
+                        }
+                      },
+                    ),
+                  ),
                 TextFormField(
                   initialValue: config.title,
                   decoration: InputDecoration(

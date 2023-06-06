@@ -13,6 +13,14 @@ enum AuthType {
   key
 }
 
+@HiveType(typeId: 2)
+enum ConnectType {
+  @HiveField(1)
+  direct,
+  @HiveField(2)
+  proxy,
+}
+
 @JsonSerializable()
 @HiveType(typeId: 1)
 class SSHConfig {
@@ -36,7 +44,7 @@ class SSHConfig {
   @HiveField(9)
   AuthType authType;
   @HiveField(10)
-  int jumpServer = 0;
+  String? jumpServer;
 
   SSHConfig({
     required this.id,
@@ -48,7 +56,7 @@ class SSHConfig {
     this.privateKey,
     this.passphrase,
     this.authType = AuthType.auto,
-    this.jumpServer = 0,
+    this.jumpServer,
   });
 
   SSHConfig copyWith({
@@ -60,7 +68,7 @@ class SSHConfig {
     String? password,
     String? privateKey,
     String? passphrase,
-    int? jumpServer,
+    String? jumpServer,
   }) {
     return SSHConfig(
       id: id ?? this.id,
@@ -71,7 +79,7 @@ class SSHConfig {
       password: password ?? this.password,
       privateKey: privateKey ?? this.privateKey,
       passphrase: passphrase ?? this.passphrase,
-      jumpServer: jumpServer ?? this.jumpServer,
+      jumpServer: jumpServer,
     );
   }
 

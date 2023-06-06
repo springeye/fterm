@@ -26,7 +26,7 @@ class SSHConfigAdapter extends TypeAdapter<SSHConfig> {
       privateKey: fields[7] as String?,
       passphrase: fields[8] as String?,
       authType: fields[9] as AuthType,
-      jumpServer: fields[10] as int,
+      jumpServer: fields[10] as String?,
     );
   }
 
@@ -111,6 +111,45 @@ class AuthTypeAdapter extends TypeAdapter<AuthType> {
           typeId == other.typeId;
 }
 
+class ConnectTypeAdapter extends TypeAdapter<ConnectType> {
+  @override
+  final int typeId = 2;
+
+  @override
+  ConnectType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 1:
+        return ConnectType.direct;
+      case 2:
+        return ConnectType.proxy;
+      default:
+        return ConnectType.direct;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, ConnectType obj) {
+    switch (obj) {
+      case ConnectType.direct:
+        writer.writeByte(1);
+        break;
+      case ConnectType.proxy:
+        writer.writeByte(2);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ConnectTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
@@ -126,7 +165,7 @@ SSHConfig _$SSHConfigFromJson(Map<String, dynamic> json) => SSHConfig(
       passphrase: json['passphrase'] as String?,
       authType: $enumDecodeNullable(_$AuthTypeEnumMap, json['authType']) ??
           AuthType.auto,
-      jumpServer: json['jumpServer'] as int? ?? 0,
+      jumpServer: json['jumpServer'] as String?,
     );
 
 Map<String, dynamic> _$SSHConfigToJson(SSHConfig instance) => <String, dynamic>{

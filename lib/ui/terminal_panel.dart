@@ -32,7 +32,7 @@ class TerminalTab extends TabItem {
     super.icon.value = icon;
   }
 
-  _init(void Function(String message) onClose) async {
+  Future<void> _init(void Function(String message) onClose) async {
     developer.log("TerminalTab._init");
     await _connector.connect();
     _connector.exitCode.then((code) {
@@ -90,7 +90,11 @@ class _TtyPanelState extends State<TerminalPanel>
     developer.log("_TtyPanelState._init");
     await widget._tab._init((message) {
       terminal.write(message);
+    }).catchError((e) {
+      // EasyLoading.showError(e.toString());
+      terminal.write(e.toString());
     });
+
     var connector = widget._tab._connector;
 
     terminal.onIconChange = (path) async {};
