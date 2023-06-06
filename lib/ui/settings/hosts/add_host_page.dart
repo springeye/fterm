@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../widget/radio.dart';
+import 'package:flutter_gen/gen_l10n/SS.dart';
 
 class AddHostPage extends StatefulWidget {
   final SSHConfig? config;
@@ -71,9 +72,10 @@ class _AddHostPageState extends State<AddHostPage> {
   @override
   Widget build(BuildContext context) {
     var hosts = context.watch<SshConfigBloc>().state.configs;
+    var ss = SS.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.config == null ? "添加主机" : "修改主机"),
+        title: Text(widget.config == null ? ss.add_host : ss.edit_host),
         actions: [
           IconButton(
               onPressed: () {
@@ -103,7 +105,7 @@ class _AddHostPageState extends State<AddHostPage> {
                     padding: const EdgeInsets.only(top: 0, bottom: 10),
                     child: Row(
                       children: [
-                        const Text("连接方式:"),
+                        Text(ss.connect_type),
                         Padding(
                           padding: const EdgeInsets.only(left: 20),
                           child: RadioFormGroup<ConnectType>(
@@ -114,14 +116,14 @@ class _AddHostPageState extends State<AddHostPage> {
                                 _connectType = value ?? ConnectType.direct;
                               });
                             },
-                            items: const [
+                            items: [
                               RadioItem<ConnectType>(
                                 ConnectType.direct,
-                                title: Text("直连"),
+                                title: Text(ss.direct),
                               ),
                               RadioItem<ConnectType>(
                                 ConnectType.proxy,
-                                title: Text("代理"),
+                                title: Text(ss.proxy),
                               ),
                             ],
                           ),
@@ -143,7 +145,7 @@ class _AddHostPageState extends State<AddHostPage> {
                           ),
                         ),
                         border: const OutlineInputBorder(),
-                        labelText: "代理主机",
+                        labelText: ss.proxy_host,
                       ),
                       items: hosts
                           .map((e) => DropdownMenuItem<String>(
@@ -156,7 +158,7 @@ class _AddHostPageState extends State<AddHostPage> {
                       validator: (v) {
                         if (_connectType == ConnectType.proxy) {
                           if (v == null || v.isEmpty) {
-                            return "必须选择一个代理主机";
+                            return ss.required_field(ss.proxy_host);
                           }
                         }
                         return null;
@@ -180,7 +182,7 @@ class _AddHostPageState extends State<AddHostPage> {
                       ),
                     ),
                     border: const OutlineInputBorder(),
-                    labelText: "标题",
+                    labelText: ss.title,
                   ),
                   onSaved: (v) => config.title = v!,
                 ),
@@ -200,11 +202,11 @@ class _AddHostPageState extends State<AddHostPage> {
                             isDense: true,
                             hintText: "192.168.1.1",
                             border: const OutlineInputBorder(),
-                            labelText: "主机地址",
+                            labelText: ss.host,
                           ),
                           validator: (v) {
                             if (v?.isEmpty == true) {
-                              EasyLoading.showError("主机地址不能为空");
+                              return ss.required_field(ss.host);
                             }
                             return null;
                           },
@@ -228,12 +230,12 @@ class _AddHostPageState extends State<AddHostPage> {
                             ),
                             border: const OutlineInputBorder(),
                             hintText: "22",
-                            labelText: "端口",
+                            labelText: ss.port,
                           ),
                           onSaved: (v) => config.port = int.tryParse(v!) ?? 0,
                           validator: (v) {
                             if (v?.isEmpty == true) {
-                              EasyLoading.showError("端口不能为空");
+                              return ss.required_field(ss.port);
                             }
                             return null;
                           },
@@ -255,12 +257,12 @@ class _AddHostPageState extends State<AddHostPage> {
                       ),
                       border: const OutlineInputBorder(),
                       hintText: "root",
-                      labelText: "用户名",
+                      labelText: ss.username,
                     ),
                     onSaved: (v) => config.username = v!,
                     validator: (v) {
                       if (v?.isEmpty == true) {
-                        EasyLoading.showError("用户名不能为空");
+                        return ss.required_field(ss.username);
                       }
                       return null;
                     },
@@ -272,7 +274,7 @@ class _AddHostPageState extends State<AddHostPage> {
                     padding: const EdgeInsets.only(top: 20, bottom: 1),
                     child: Row(
                       children: [
-                        const Text("验证方式:"),
+                        Text(ss.auth_type),
                         Padding(
                           padding: const EdgeInsets.only(left: 20),
                           child: RadioFormGroup<AuthType>(
@@ -286,18 +288,18 @@ class _AddHostPageState extends State<AddHostPage> {
                             onSaved: (v) {
                               config.authType = v!;
                             },
-                            items: const [
+                            items: [
                               RadioItem<AuthType>(
                                 AuthType.auto,
-                                title: Text("自动"),
+                                title: Text(ss.auto),
                               ),
                               RadioItem<AuthType>(
                                 AuthType.password,
-                                title: Text("密码"),
+                                title: Text(ss.password),
                               ),
                               RadioItem<AuthType>(
                                 AuthType.key,
-                                title: Text("秘钥"),
+                                title: Text(ss.secret_key),
                               )
                             ],
                           ),
@@ -321,7 +323,7 @@ class _AddHostPageState extends State<AddHostPage> {
                         ),
                         isDense: true,
                         border: const OutlineInputBorder(),
-                        labelText: "密码",
+                        labelText: ss.password,
                       ),
                       onChanged: (v) => config.password = v,
                       validator: (v) {
@@ -329,7 +331,7 @@ class _AddHostPageState extends State<AddHostPage> {
                                 config.password?.isEmpty == true) &&
                             (config.privateKey == null ||
                                 config.privateKey?.isEmpty == true)) {
-                          EasyLoading.showError("至少填写一种认证方式");
+                          return ss.auth_type_error;
                         }
                         return null;
                       },
@@ -346,7 +348,7 @@ class _AddHostPageState extends State<AddHostPage> {
                                   config.password?.isEmpty == true) &&
                               (config.privateKey == null ||
                                   config.privateKey?.isEmpty == true)) {
-                            EasyLoading.showError("至少填写一种认证方式");
+                            return ss.auth_type_error;
                           }
                           return null;
                         },
@@ -355,15 +357,16 @@ class _AddHostPageState extends State<AddHostPage> {
                         minLines: 10,
                         controller: _keyController,
                         decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).hintColor,
-                              ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).hintColor,
                             ),
-                            isDense: true,
-                            border: const OutlineInputBorder(),
-                            labelText: "秘钥",
-                            hintText: "鼠标右键可以直接选择秘钥文件"),
+                          ),
+                          isDense: true,
+                          border: const OutlineInputBorder(),
+                          labelText: ss.secret_key,
+                          hintText: ss.select_key_hint,
+                        ),
                         contextMenuBuilder: (BuildContext context,
                             EditableTextState editableTextState) {
                           final TextEditingValue value =

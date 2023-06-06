@@ -21,5 +21,31 @@
       }
     }
   },
-  "sync": "Sync"
+  "sync": "Sync",
+  "host_list": "Host List",
+  "connect_type": "Connect Type:",
+  "direct": "Direct",
+  "proxy": "Proxy",
+  "title": "Title",
+  "host": "Host",
+  "username": "Username",
+  "password":"Password",
+  "port": "Port",
+  "auto": "Auto",
+  "secret_key": "Private Key",
+  "add_host": "Add Host",
+  "edit_host": "Edit Host",
+  "proxy_host": "Proxy Host",
+  "auth_type": "Auth Method:",
+  "select_key_hint": "Right click to select the key file",
+  "auth_type_error": "Fill in at least one authentication method",
+  "required_field": "{field} is required",
+  "@required_field": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "username"
+      }
+    }
+  }
 }

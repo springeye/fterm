@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../bloc/ssh_config_bloc.dart';
+import 'package:flutter_gen/gen_l10n/SS.dart';
 
 class HostListPage extends StatelessWidget {
   const HostListPage({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class HostListPage extends StatelessWidget {
     var state = context.watch<SshConfigBloc>().state;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("主机列表"),
+        title: Text(SS.of(context).host_list),
         actions: [
           IconButton(
               onPressed: () {

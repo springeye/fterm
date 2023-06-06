@@ -21,5 +21,33 @@
       }
     }
   },
-  "sync": "同步"
+  "sync": "同步",
+  "host_list": "主机列表",
+  "connect_type": "连接类型:",
+  "direct": "直连",
+  "proxy": "代理",
+  "title": "标题",
+  "host": "主机",
+  "username": "用户名",
+  "password":"密码",
+  "port": "端口",
+  "auto": "自动",
+  "secret_key": "秘钥",
+  "add_host": "添加主机",
+  "edit_host": "编辑主机",
+  "proxy_host": "代理主机",
+  "auth_type": "认证方式:",
+  "select_key_hint": "鼠标右键选择秘钥文件",
+  "auth_type_error": "至少填写一种认证方式",
+  "required_field": "{field}不能为空",
+  "@required_field": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "用户名"
+      }
+    }
+  }
+
+
 }
