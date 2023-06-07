@@ -1,7 +1,9 @@
+
 # fterm
-
+[![build_linux](https://github.com/springeye/fterm/actions/workflows/build_linux.yml/badge.svg)](https://github.com/springeye/fterm/actions/workflows/build_linux.yml)
+[![build_windows](https://github.com/springeye/fterm/actions/workflows/build_windows.yml/badge.svg)](https://github.com/springeye/fterm/actions/workflows/build_windows.yml)
+[![build_macos](https://github.com/springeye/fterm/actions/workflows/build_macos.yml/badge.svg)](https://github.com/springeye/fterm/actions/workflows/build_macos.yml)  
 fterm是一款基于Flutter开发的跨平台终端工具
-
 # 有什么优点呢？
 1. 没有很多复杂的功能，几乎想自带的终端一样使用。
 2. 相较于很多使用Electron开发的终端应用,拥有较小的体积。
