@@ -1,0 +1,46 @@
+name: Build
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+  push:
+    branches:
+      - master
+#    tags:
+#      - v*.*.*
+jobs:
+  build_macos:
+    if: ${false}
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      # Setup
+      - uses: actions/checkout@v3
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Generate intermediates
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Enable macos build
+        run: flutter config --enable-macos-desktop
+      - name: Build artifacts
+        run: flutter build macos --release
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: fterm-${{github.ref_name}}-macos.zip
+          directory: build/macos/Build/Products/Release
+      - name: MaoOS Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: build/macos/Build/Products/Release/fterm-${{github.ref_name}}-macos.zip
+
