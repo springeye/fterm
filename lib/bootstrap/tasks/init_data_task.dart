@@ -14,7 +14,6 @@ import '../../ui/connector/local_connector.dart';
 import '../../ui/terminal_panel.dart';
 import '../runner.dart';
 import '../../utils/string_ext.dart';
-import 'package:path/path.dart' as path;
 
 class InitDataTask extends LaunchTask {
   @override
@@ -39,37 +38,5 @@ class InitDataTask extends LaunchTask {
     syncService.pull().then(
           (value) => syncService.push(),
         );
-    if (shellPath.isNotEmpty) {
-      var list = Platform.environment["PATH"]?.split(":") ?? [];
-      for (var p in list) {
-        if (!path.split(p).contains("bin")) continue;
-        try {
-          var link = Link("$p/fterm");
-          if (link.existsSync()) {
-            await link.update(shellPath);
-            print("update link $shellPath ==> ${"$p/fterm"} success");
-          } else {
-            await link.create(shellPath);
-            print("create link $shellPath ==> ${"$p/term"} success");
-          }
-
-          break;
-        } catch (e) {
-          // print(e);
-        }
-      }
-    }
   }
-}
-
-String get shellPath {
-  if (Platform.isMacOS) {
-    String dir = Platform.resolvedExecutable;
-    return path.normalize(path.join(
-        dir,
-        "../..",
-        "Frameworks/App.framework/Versions/Current/Resources/flutter_assets",
-        Assets.scripts.fterm));
-  }
-  return "";
 }

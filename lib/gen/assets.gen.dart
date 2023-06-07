@@ -138,8 +138,25 @@ class $AssetsImagesGen {
 class $AssetsScriptsGen {
   const $AssetsScriptsGen();
 
-  /// File path: assets/scripts/fterm
-  String get fterm => 'assets/scripts/fterm';
+  $AssetsScriptsLinuxGen get linux => const $AssetsScriptsLinuxGen();
+  $AssetsScriptsMacosGen get macos => const $AssetsScriptsMacosGen();
+}
+
+class $AssetsScriptsLinuxGen {
+  const $AssetsScriptsLinuxGen();
+
+  /// File path: assets/scripts/linux/fterm
+  String get fterm => 'assets/scripts/linux/fterm';
+
+  /// List of all assets
+  List<String> get values => [fterm];
+}
+
+class $AssetsScriptsMacosGen {
+  const $AssetsScriptsMacosGen();
+
+  /// File path: assets/scripts/macos/fterm
+  String get fterm => 'assets/scripts/macos/fterm';
 
   /// List of all assets
   List<String> get values => [fterm];

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fterm/bloc/home_tab_bloc.dart';
+import 'package:fterm/bootstrap/tasks/launcher_script_task.dart';
 import 'package:fterm/bootstrap/tasks/windows_task.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -85,6 +86,7 @@ class AppRunner {
     appLauncher.addTask(InitDataTask());
     appLauncher.addTask(WindowsTask());
     appLauncher.addTask(InitAppWidgetTask());
+    appLauncher.addTask(LauncherScriptTask());
     appLauncher.launch(launchOptions);
   }
 }
