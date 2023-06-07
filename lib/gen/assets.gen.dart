@@ -135,11 +135,22 @@ class $AssetsImagesGen {
       [icChromeClose, icChromeMaximize, icChromeMinimize, icChromeUnmaximize];
 }
 
+class $AssetsScriptsGen {
+  const $AssetsScriptsGen();
+
+  /// File path: assets/scripts/fterm
+  String get fterm => 'assets/scripts/fterm';
+
+  /// List of all assets
+  List<String> get values => [fterm];
+}
+
 class Assets {
   Assets._();
 
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsScriptsGen scripts = $AssetsScriptsGen();
   static const AssetGenImage terminalPng = AssetGenImage('assets/terminal.png');
   static const SvgGenImage terminalSvg = SvgGenImage('assets/terminal.svg');
 

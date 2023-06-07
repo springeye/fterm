@@ -5,12 +5,15 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fterm/di/di.dart';
 import 'package:fterm/service/sync_service.dart';
 import 'package:fterm/service/webdav_sync_service.dart';
 import 'package:win32_registry/win32_registry.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

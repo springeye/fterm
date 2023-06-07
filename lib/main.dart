@@ -3,8 +3,8 @@ import 'package:fterm/bootstrap/launcher.dart';
 import 'package:fterm/bootstrap/options.dart';
 import 'package:fterm/bootstrap/runner.dart';
 
-
-Future<void> main() async {
+Future<void> main(List<String> arguments) async {
+  print("arguments==>$arguments");
   Bloc.observer = _AppBlocObserver();
   AppRunner.run(
     Launcher(),
