@@ -40,8 +40,9 @@ Visual Studio 2022 以上
 scoop install openssl
 ```
 
-link [https://pub.dev/packages/flutter_secure_storage]()  
-link [https://pub.dev/packages/sqlcipher_flutter_libs]()
+Related links:
+1. [https://pub.dev/packages/flutter_secure_storage]()  
+2. [https://pub.dev/packages/sqlcipher_flutter_libs]()
 ## Special thanks to the following items which helped me a lot
 [https://github.com/TerminalStudio]()  
 [https://github.com/Eugeny/tabby]()
