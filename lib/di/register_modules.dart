@@ -1,13 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:fterm/db/database.dart';
+import 'package:fterm/db/ssh_config_dao.dart';
+import 'package:fterm/utils/ext.dart';
 import 'package:injectable/injectable.dart';
-import 'package:path_provider/path_provider.dart';
-
-import '../model/ssh_config.dart';
 
 @module
 abstract class RegisterModule {
@@ -19,24 +17,24 @@ abstract class RegisterModule {
 
   @singleton
   @preResolve
-  Future<Box<SSHConfig>> get providerBox async {
+  @Named("encryptionKey")
+  Future<String> get provideEncryptionKey async {
     const secureStorage = FlutterSecureStorage();
     // if key not exists return null
-    final encryptionKeyString = await secureStorage.read(key: 'hive');
+    final encryptionKeyString = await secureStorage.read(key: 'encryptionKey');
     if (encryptionKeyString == null) {
-      final key = Hive.generateSecureKey();
+      final key = Random.secure().nextBytes(128);
       await secureStorage.write(
-        key: 'hive',
+        key: 'encryptionKey',
         value: base64UrlEncode(key),
       );
     }
-    final key = await secureStorage.read(key: 'hive');
-    final encryptionKeyUint8List = base64Url.decode(key!);
-    print('Encryption key Uint8List: $encryptionKeyUint8List');
-    var box = await Hive.openBox<SSHConfig>('ssh',
-        encryptionCipher: HiveAesCipher(encryptionKeyUint8List));
-    print(box.path);
-    // await box.clear();
-    return box;
+    final key = await secureStorage.read(key: 'encryptionKey');
+    return key!;
+  }
+
+  @singleton
+  SSHConfigDao provideSSHConfigDao(AppDatabase db) {
+    return db.configDao;
   }
 }

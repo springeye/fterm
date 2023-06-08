@@ -5,7 +5,6 @@ import 'package:fterm/bloc/home_tab_bloc.dart';
 import 'package:fterm/bootstrap/tasks/launcher_script_task.dart';
 import 'package:fterm/bootstrap/tasks/windows_task.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -64,13 +63,6 @@ typedef Options = Future<LaunchOptions> Function();
 class AppRunner {
   static _ensureInitialized() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Hive.initFlutter();
-    var appDir = await getApplicationDocumentsDirectory();
-    String subDir = "fterm";
-    var path = path_helper.join(appDir.path, subDir);
-    Hive.init(path);
-    Hive.registerAdapter(SSHConfigAdapter());
-    Hive.registerAdapter(AuthTypeAdapter());
   }
 
   static Future<void> run(EntryPoint root, Options options) async {

@@ -5,8 +5,8 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fterm/di/di.dart';
 import 'package:fterm/gen/assets.gen.dart';
-import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
+import '../db/ssh_config_dao.dart';
 import '../model/shell.dart';
 import '../model/ssh_config.dart';
 
@@ -18,9 +18,7 @@ part 'profiles_search_cubit.freezed.dart';
 class ProfilesSearchCubit extends Cubit<ProfilesState> {
   ProfilesSearchCubit()
       : super(const ProfilesState.initial(
-            [Item.hosts("主机", true, []), Item.shells("本地", true, [])], "")) {
-    load();
-  }
+            [Item.hosts("主机", true, []), Item.shells("本地", true, [])], "")) {}
 
   @override
   Future<void> close() {
@@ -35,8 +33,8 @@ class ProfilesSearchCubit extends Cubit<ProfilesState> {
   }
 
   Future<void> load() async {
-    var box = getIt<Box<SSHConfig>>();
-    var hosts = box.values.toList();
+    var dao = getIt<SSHConfigDao>();
+    var hosts = await dao.findAllSSHConfig();
     var shells = await _shells();
     emit(state.copyWith(
       items: [

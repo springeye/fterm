@@ -1,11 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fterm/bootstrap/launcher.dart';
 import 'package:fterm/bootstrap/options.dart';
 import 'package:fterm/bootstrap/runner.dart';
 
 Future<void> main(List<String> arguments) async {
-  print("arguments==>$arguments");
-  Bloc.observer = _AppBlocObserver();
+  print("launch arguments==>$arguments");
+  if (kDebugMode) Bloc.observer = _AppBlocObserver();
   AppRunner.run(
     Launcher(),
     () => Future.value(const LaunchOptions()),

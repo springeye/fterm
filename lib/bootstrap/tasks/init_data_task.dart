@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:floor/floor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:fterm/gen/assets.gen.dart';
@@ -9,6 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/app_config_cubit.dart';
 import '../../bloc/home_tab_bloc.dart';
+import '../../bloc/profiles_search_cubit.dart';
+import '../../bloc/ssh_config_bloc.dart';
+import '../../db/database.dart';
 import '../../di/di.dart';
 import '../../ui/connector/local_connector.dart';
 import '../../ui/terminal_panel.dart';
@@ -34,6 +38,8 @@ class InitDataTask extends LaunchTask {
     } else {
       getIt<AppConfigCubit>().setLocal(locale);
     }
+    getIt<SshConfigBloc>().add(const SshConfigEvent.load());
+    getIt<ProfilesSearchCubit>().load();
     var syncService = getIt<SyncService>();
     syncService.pull().then(
           (value) => syncService.push(),

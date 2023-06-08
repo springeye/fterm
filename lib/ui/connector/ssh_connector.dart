@@ -3,10 +3,10 @@ import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fterm/db/ssh_config_dao.dart';
 import 'package:fterm/di/di.dart';
 import 'package:fterm/model/ssh_config.dart';
 import 'package:fterm/ui/connector/connector.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class SSHConnector extends Connector {
   final SSHConfig config;
@@ -21,10 +21,10 @@ class SSHConnector extends Connector {
   @override
   Future<void> connect() async {
     SSHSocket sshSocket;
-    var box = getIt<Box<SSHConfig>>();
-    SSHConfig? jumpServer = box.values
-        .where((element) => element.id == config.jumpServer)
-        .firstOrNull;
+    var box = getIt<SSHConfigDao>();
+    var jumpServerId = config.jumpServer;
+    SSHConfig? jumpServer =
+        jumpServerId == null ? null : await box.findSSHConfigById(jumpServerId);
     if (jumpServer != null) {
       _jmpServer =
           await SSHSocket.connect(jumpServer.host, jumpServer.port).then(
