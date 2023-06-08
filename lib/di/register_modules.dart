@@ -30,7 +30,6 @@ abstract class RegisterModule {
       );
     }
     final key = await secureStorage.read(key: 'encryptionKey');
-    print(key);
     return key!;
   }
 
