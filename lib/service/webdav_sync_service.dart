@@ -5,8 +5,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fterm/db/ssh_config_dao.dart';
 import 'package:fterm/service/sync_service.dart';
-import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:webdav_client/webdav_client.dart';
 
@@ -54,17 +54,15 @@ class WebDAVSyncService extends SyncService {
   }
 
   @PostConstruct()
-  void init() {
-    var box = getIt<Box<SSHConfig>>();
-  }
+  void init() {}
 
   @override
   Future<void> push() async {
-    var box = getIt<Box<SSHConfig>>();
+    var box = getIt<SSHConfigDao>();
     var client = await _client;
     if (client == null) return;
     await client.mkdirAll("fterm/backup/");
-    var map = box.toMap();
+    var map = await box.findAllSSHConfig();
     client.write("backup-${DateTime.now().millisecondsSinceEpoch}",
         Uint8List.fromList(jsonEncode(map).codeUnits));
   }
@@ -73,7 +71,6 @@ class WebDAVSyncService extends SyncService {
   Future<void> pull() async {
     var client = await _client;
     if (client == null) return;
-    var box = getIt<Box<SSHConfig>>();
 
     await client.mkdirAll("fterm/backup/");
     var files = await client

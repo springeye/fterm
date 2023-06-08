@@ -1,49 +1,38 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:floor/floor.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ssh_config.g.dart';
 
-@HiveType(typeId: 2)
-enum AuthType {
-  @HiveField(1)
-  auto,
-  @HiveField(2)
-  password,
-  @HiveField(3)
-  key
-}
+enum AuthType { auto, password, key }
 
-@HiveType(typeId: 2)
 enum ConnectType {
-  @HiveField(1)
   direct,
-  @HiveField(2)
   proxy,
 }
 
 @JsonSerializable()
-@HiveType(typeId: 1)
+@Entity(
+  foreignKeys: [
+    ForeignKey(
+      childColumns: ['jump_server'],
+      parentColumns: ['id'],
+      entity: SSHConfig,
+    )
+  ],
+)
 class SSHConfig {
-  @HiveField(1)
+  @primaryKey
   String id; // you can also use id = null to auto increment
 
-  @HiveField(2, defaultValue: "")
   String title;
-  @HiveField(3, defaultValue: "")
   String host;
-  @HiveField(4, defaultValue: 0)
   int port;
-  @HiveField(5, defaultValue: "")
   String username;
-  @HiveField(6)
   String? password;
-  @HiveField(7)
   String? privateKey;
-  @HiveField(8)
   String? passphrase;
-  @HiveField(9)
   AuthType authType;
-  @HiveField(10)
+  @ColumnInfo(name: 'jump_server')
   String? jumpServer;
 
   SSHConfig({

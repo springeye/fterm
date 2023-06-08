@@ -61,7 +61,7 @@ class _$AppDatabase extends AppDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  PersonDao? _personDaoInstance;
+  SSHConfigDao? _configDaoInstance;
 
   Future<sqflite.Database> open(
     String path,
@@ -85,7 +85,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `SSHConfig` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `host` TEXT NOT NULL, `port` INTEGER NOT NULL, `username` TEXT NOT NULL, `password` TEXT, `privateKey` TEXT, `passphrase` TEXT, `authType` INTEGER NOT NULL, `jump_server` TEXT, FOREIGN KEY (`jump_server`) REFERENCES `SSHConfig` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -94,22 +94,31 @@ class _$AppDatabase extends AppDatabase {
   }
 
   @override
-  PersonDao get personDao {
-    return _personDaoInstance ??= _$PersonDao(database, changeListener);
+  SSHConfigDao get configDao {
+    return _configDaoInstance ??= _$SSHConfigDao(database, changeListener);
   }
 }
 
-class _$PersonDao extends PersonDao {
-  _$PersonDao(
+class _$SSHConfigDao extends SSHConfigDao {
+  _$SSHConfigDao(
     this.database,
     this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database, changeListener),
-        _personInsertionAdapter = InsertionAdapter(
+  )   : _queryAdapter = QueryAdapter(database),
+        _sSHConfigInsertionAdapter = InsertionAdapter(
             database,
-            'Person',
-            (Person item) =>
-                <String, Object?>{'id': item.id, 'name': item.name},
-            changeListener);
+            'SSHConfig',
+            (SSHConfig item) => <String, Object?>{
+                  'id': item.id,
+                  'title': item.title,
+                  'host': item.host,
+                  'port': item.port,
+                  'username': item.username,
+                  'password': item.password,
+                  'privateKey': item.privateKey,
+                  'passphrase': item.passphrase,
+                  'authType': item.authType.index,
+                  'jump_server': item.jumpServer
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -117,35 +126,43 @@ class _$PersonDao extends PersonDao {
 
   final QueryAdapter _queryAdapter;
 
-  final InsertionAdapter<Person> _personInsertionAdapter;
+  final InsertionAdapter<SSHConfig> _sSHConfigInsertionAdapter;
 
   @override
-  Future<List<Person>> findAllPeople() async {
-    return _queryAdapter.queryList('SELECT * FROM Person',
-        mapper: (Map<String, Object?> row) =>
-            Person(row['id'] as int, row['name'] as String));
+  Future<List<SSHConfig>> findAllSSHConfig() async {
+    return _queryAdapter.queryList('SELECT * FROM SSHConfig',
+        mapper: (Map<String, Object?> row) => SSHConfig(
+            id: row['id'] as String,
+            title: row['title'] as String,
+            host: row['host'] as String,
+            port: row['port'] as int,
+            username: row['username'] as String,
+            password: row['password'] as String?,
+            privateKey: row['privateKey'] as String?,
+            passphrase: row['passphrase'] as String?,
+            authType: AuthType.values[row['authType'] as int],
+            jumpServer: row['jump_server'] as String?));
   }
 
   @override
-  Stream<List<String>> findAllPeopleName() {
-    return _queryAdapter.queryListStream('SELECT name FROM Person',
-        mapper: (Map<String, Object?> row) => row.values.first as String,
-        queryableName: 'Person',
-        isView: false);
+  Future<SSHConfig?> findSSHConfigById(String id) async {
+    return _queryAdapter.query('SELECT * FROM SSHConfig WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => SSHConfig(
+            id: row['id'] as String,
+            title: row['title'] as String,
+            host: row['host'] as String,
+            port: row['port'] as int,
+            username: row['username'] as String,
+            password: row['password'] as String?,
+            privateKey: row['privateKey'] as String?,
+            passphrase: row['passphrase'] as String?,
+            authType: AuthType.values[row['authType'] as int],
+            jumpServer: row['jump_server'] as String?),
+        arguments: [id]);
   }
 
   @override
-  Stream<Person?> findPersonById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM Person WHERE id = ?1',
-        mapper: (Map<String, Object?> row) =>
-            Person(row['id'] as int, row['name'] as String),
-        arguments: [id],
-        queryableName: 'Person',
-        isView: false);
-  }
-
-  @override
-  Future<void> insertPerson(Person person) async {
-    await _personInsertionAdapter.insert(person, OnConflictStrategy.abort);
+  Future<void> addSSHConfig(SSHConfig config) async {
+    await _sSHConfigInsertionAdapter.insert(config, OnConflictStrategy.replace);
   }
 }

@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/app_config_cubit.dart';
 import '../../bloc/home_tab_bloc.dart';
+import '../../bloc/profiles_search_cubit.dart';
+import '../../bloc/ssh_config_bloc.dart';
 import '../../db/database.dart';
 import '../../di/di.dart';
 import '../../ui/connector/local_connector.dart';
@@ -36,23 +38,11 @@ class InitDataTask extends LaunchTask {
     } else {
       getIt<AppConfigCubit>().setLocal(locale);
     }
+    getIt<SshConfigBloc>().add(const SshConfigEvent.load());
+    getIt<ProfilesSearchCubit>().load();
     var syncService = getIt<SyncService>();
     syncService.pull().then(
           (value) => syncService.push(),
         );
-    final database =
-        await $FloorAppDatabase.databaseBuilder('app_database.db').addCallback(
-      Callback(onConfigure: (db) async {
-        print("db path=>>${db.path}");
-        var cipherVersion = await db.rawQuery("PRAGMA cipher_version");
-        if (cipherVersion.isEmpty) {
-          throw StateError(
-              'SQLCipher library is not available, please check your dependencies!');
-        }
-        debugPrint(cipherVersion.toString());
-        db.execute("PRAGMA key = '123456';");
-      }),
-    ).build();
-    database.personDao.findAllPeople();
   }
 }

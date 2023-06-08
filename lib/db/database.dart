@@ -2,17 +2,41 @@
 
 // required package imports
 import 'dart:async';
+import 'dart:io';
 import 'package:floor/floor.dart';
+import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqflite;
-// import 'package:sqflite/sqflite.dart' as sqflite;
 
-import 'person.dart';
-import 'person_dao.dart';
+import '../model/ssh_config.dart';
+import 'ssh_config_dao.dart';
+// import 'package:sqflite/sqflite.dart' as sqflite;
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 1, entities: [Person])
+@singleton
+@Database(version: 1, entities: [SSHConfig])
 abstract class AppDatabase extends FloorDatabase {
-  PersonDao get personDao;
+  @factoryMethod
+  @preResolve
+  static Future<AppDatabase> from(@Named("encryptionKey") String key) async {
+    var builder = $FloorAppDatabase.databaseBuilder('app_database.db');
+    return await builder.addCallback(
+      Callback(
+        onConfigure: (db) async {
+          print("db path=>>${db.path}");
+          var cipherVersion = await db.rawQuery("PRAGMA cipher_version");
+          if (cipherVersion.isEmpty) {
+            throw StateError(
+                'SQLCipher library is not available, please check your dependencies!');
+          }
+          debugPrint(cipherVersion.toString());
+          db.execute("PRAGMA key = '$key';");
+        },
+      ),
+    ).build();
+  }
+
+  SSHConfigDao get configDao;
 }
