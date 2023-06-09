@@ -4,8 +4,11 @@ import 'package:fterm/bootstrap/launcher.dart';
 import 'package:fterm/bootstrap/options.dart';
 import 'package:fterm/bootstrap/runner.dart';
 
+import 'native.dart';
+
 Future<void> main(List<String> arguments) async {
   print("launch arguments==>$arguments");
+  print("native api===>${await api.getVersion()}");
   if (kDebugMode) Bloc.observer = _AppBlocObserver();
   AppRunner.run(
     Launcher(),
