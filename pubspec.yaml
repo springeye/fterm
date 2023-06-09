@@ -51,7 +51,7 @@ dependencies:
   scroll_pos: ^0.4.0
   flutter_easyloading: ^3.0.5
   ffi: ^2.0.2
-  flutter_rust_bridge: ^1.75.3
+  flutter_rust_bridge: ^1.77.1
   bitsdojo_window: ^0.1.5
   popover: ^0.2.8+2
   native_context_menu: ^0.2.2+5
@@ -72,6 +72,7 @@ dependencies:
   floor: ^1.4.2
   sqflite_common_ffi: ^2.2.5
   sqlcipher_flutter_libs: ^0.5.6
+  sqflite_common: ^2.4.5
 
 dev_dependencies:
   flutter_test:

@@ -9,12 +9,27 @@ import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqflite;
-
+import 'package:sqflite_common/sqflite.dart' hide Database;
 import '../model/ssh_config.dart';
 import 'ssh_config_dao.dart';
-// import 'package:sqflite/sqflite.dart' as sqflite;
-
+import 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
+import 'package:sqlite3/open.dart';
 part 'database.g.dart'; // the generated code will be there
+final DatabaseFactory sqfliteDatabaseFactory = () {
+  if (Platform.isAndroid || Platform.isIOS) {
+    if(Platform.isAndroid){
+      open.overrideFor(
+          OperatingSystem.android, openCipherOnAndroid);
+    }
+    return databaseFactory;
+  } else if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+    return sqflite.databaseFactoryFfi;
+  } else {
+    throw UnsupportedError(
+      'Platform ${Platform.operatingSystem} is not supported by Floor.',
+    );
+  }
+}();
 
 @singleton
 @Database(version: 1, entities: [SSHConfig])
