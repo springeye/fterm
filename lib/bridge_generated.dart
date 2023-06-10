@@ -26,6 +26,23 @@ class RustFfiImpl implements RustFfi {
   factory RustFfiImpl.wasm(FutureOr<WasmModule> module) =>
       RustFfiImpl(module as ExternalLibrary);
   RustFfiImpl.raw(this._platform);
+  Future<List<Host>> getAllHosts({String? path, dynamic hint}) {
+    var arg0 = _platform.api2wire_opt_String(path);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_get_all_hosts(port_, arg0),
+      parseSuccessData: _wire2api_list_host,
+      constMeta: kGetAllHostsConstMeta,
+      argValues: [path],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kGetAllHostsConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "get_all_hosts",
+        argNames: ["path"],
+      );
+
   Future<String> getVersion({dynamic hint}) {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_get_version(port_),
@@ -51,6 +68,33 @@ class RustFfiImpl implements RustFfi {
     return raw as String;
   }
 
+  Host _wire2api_host(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 7)
+      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    return Host(
+      id: _wire2api_String(arr[0]),
+      title: _wire2api_String(arr[1]),
+      host: _wire2api_String(arr[2]),
+      port: _wire2api_u32(arr[3]),
+      username: _wire2api_String(arr[4]),
+      password: _wire2api_opt_String(arr[5]),
+      privateKey: _wire2api_opt_String(arr[6]),
+    );
+  }
+
+  List<Host> _wire2api_list_host(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_host).toList();
+  }
+
+  String? _wire2api_opt_String(dynamic raw) {
+    return raw == null ? null : _wire2api_String(raw);
+  }
+
+  int _wire2api_u32(dynamic raw) {
+    return raw as int;
+  }
+
   int _wire2api_u8(dynamic raw) {
     return raw as int;
   }
@@ -62,6 +106,11 @@ class RustFfiImpl implements RustFfi {
 
 // Section: api2wire
 
+@protected
+int api2wire_u8(int raw) {
+  return raw;
+}
+
 // Section: finalizer
 
 class RustFfiPlatform extends FlutterRustBridgeBase<RustFfiWire> {
@@ -69,6 +118,22 @@ class RustFfiPlatform extends FlutterRustBridgeBase<RustFfiWire> {
 
 // Section: api2wire
 
+  @protected
+  ffi.Pointer<wire_uint_8_list> api2wire_String(String raw) {
+    return api2wire_uint_8_list(utf8.encoder.convert(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_uint_8_list> api2wire_opt_String(String? raw) {
+    return raw == null ? ffi.nullptr : api2wire_String(raw);
+  }
+
+  @protected
+  ffi.Pointer<wire_uint_8_list> api2wire_uint_8_list(Uint8List raw) {
+    final ans = inner.new_uint_8_list_0(raw.length);
+    ans.ref.ptr.asTypedList(raw.length).setAll(0, raw);
+    return ans;
+  }
 // Section: finalizer
 
 // Section: api_fill_to_wire
@@ -170,6 +235,23 @@ class RustFfiWire implements FlutterRustBridgeWireBase {
   late final _init_frb_dart_api_dl = _init_frb_dart_api_dlPtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>)>();
 
+  void wire_get_all_hosts(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> path,
+  ) {
+    return _wire_get_all_hosts(
+      port_,
+      path,
+    );
+  }
+
+  late final _wire_get_all_hostsPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_get_all_hosts');
+  late final _wire_get_all_hosts = _wire_get_all_hostsPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
   void wire_get_version(
     int port_,
   ) {
@@ -183,6 +265,21 @@ class RustFfiWire implements FlutterRustBridgeWireBase {
           'wire_get_version');
   late final _wire_get_version =
       _wire_get_versionPtr.asFunction<void Function(int)>();
+
+  ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
+    int len,
+  ) {
+    return _new_uint_8_list_0(
+      len,
+    );
+  }
+
+  late final _new_uint_8_list_0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_uint_8_list> Function(
+              ffi.Int32)>>('new_uint_8_list_0');
+  late final _new_uint_8_list_0 = _new_uint_8_list_0Ptr
+      .asFunction<ffi.Pointer<wire_uint_8_list> Function(int)>();
 
   void free_WireSyncReturn(
     WireSyncReturn ptr,
@@ -200,6 +297,13 @@ class RustFfiWire implements FlutterRustBridgeWireBase {
 }
 
 final class _Dart_Handle extends ffi.Opaque {}
+
+final class wire_uint_8_list extends ffi.Struct {
+  external ffi.Pointer<ffi.Uint8> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
 
 typedef DartPostCObjectFnType = ffi.Pointer<
     ffi.NativeFunction<

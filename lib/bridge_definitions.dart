@@ -9,7 +9,31 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class RustFfi {
+  Future<List<Host>> getAllHosts({String? path, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kGetAllHostsConstMeta;
+
   Future<String> getVersion({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetVersionConstMeta;
+}
+
+class Host {
+  final String id;
+  final String title;
+  final String host;
+  final int port;
+  final String username;
+  final String? password;
+  final String? privateKey;
+
+  const Host({
+    required this.id,
+    required this.title,
+    required this.host,
+    required this.port,
+    required this.username,
+    this.password,
+    this.privateKey,
+  });
 }

@@ -841,6 +841,7 @@ dependencies = [
 name = "rust_ffi"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "flutter_rust_bridge",
  "flutter_rust_bridge_codegen",
  "rusqlite",

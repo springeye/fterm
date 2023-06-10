@@ -21,6 +21,19 @@ use std::sync::Arc;
 
 // Section: wire functions
 
+fn wire_get_all_hosts_impl(port_: MessagePort, path: impl Wire2Api<Option<String>> + UnwindSafe) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "get_all_hosts",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_path = path.wire2api();
+            move |task_callback| get_all_hosts(api_path)
+        },
+    )
+}
 fn wire_get_version_impl(port_: MessagePort) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
@@ -53,7 +66,30 @@ where
         (!self.is_null()).then(|| self.wire2api())
     }
 }
+
+impl Wire2Api<u8> for u8 {
+    fn wire2api(self) -> u8 {
+        self
+    }
+}
+
 // Section: impl IntoDart
+
+impl support::IntoDart for Host {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.id.into_dart(),
+            self.title.into_dart(),
+            self.host.into_dart(),
+            self.port.into_dart(),
+            self.username.into_dart(),
+            self.password.into_dart(),
+            self.private_key.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for Host {}
 
 // Section: executor
 
