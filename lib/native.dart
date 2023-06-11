@@ -19,7 +19,16 @@ class NativeApi{
   NativeApi({this.path}):_api=RustFfiImpl(io.Platform.isIOS || io.Platform.isMacOS
       ? DynamicLibrary.executable()
       : DynamicLibrary.open(_dylib));
-  Future<List<Host>> getAllHosts() async {
-    return await _api.getAllHosts(path:path);
+  Future<List<Host>> findAll() async {
+    return await _api.findAll(path:path);
+  }
+  Future<int> insert(Host host) async {
+    return await _api.insert(path:path, host: host);
+  }
+  Future<int> update(Host host) async {
+    return await _api.update(path:path, host: host);
+  }
+  Future<int> delete(String id) async {
+    return await _api.delete(path:path,id: id);
   }
 }

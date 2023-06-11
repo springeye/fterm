@@ -1,7 +1,8 @@
-
-use rusqlite::{Connection, Result};
+use std::sync::{Arc, Mutex};
+pub use rusqlite::{Connection, Error, Result};
 use anyhow;
-
+use flutter_rust_bridge::{DartAbi, frb, RustOpaque};
+use flutter_rust_bridge::ffi::ffi::DartCObject;
 
 
 //
@@ -41,25 +42,31 @@ fn get_db(path:Option<String>) -> Connection {
         )",
         (), // empty list of parameters.
     ).unwrap();
-
-
-    let me = Host {
-        id: "123123".to_string(),
-        title: "henjue-pc".to_string(),
-        host: "127.0.01".to_string(),
-        port: 0,
-        username: "develop".to_string(),
-        password: None,
-        private_key: None,
-    };
-    conn.execute(
-        "INSERT INTO host (id, title, host,port,username,password,private_key) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
-        (&me.id, &me.title,&me.host,&me.port,&me.username,&me.password,&me.private_key),
-    ).unwrap();
-
     conn
 }
-pub fn get_all_hosts(path:Option<String>) -> anyhow::Result<Vec<Host>> {
+pub fn insert(path:Option<String>,host:Host) -> usize {
+    let conn=get_db(path);
+    conn.execute(
+        "INSERT INTO host (id, title, host,port,username,password,private_key) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+        (&host.id, &host.title,&host.host,&host.port,&host.username,&host.password,&host.private_key),
+    ).unwrap()
+}
+pub fn update(path:Option<String>,host:Host) -> usize {
+    let conn=get_db(path);
+    conn.execute(
+        "update host set title=?1, host=?2,port=?3,username=?4,password=?5,private_key=?6 where id = ?7",
+        (&host.title,&host.host,&host.port,&host.username,&host.password,&host.private_key,&host.id, ),
+    ).unwrap()
+}
+pub fn delete(path:Option<String>,id:String) -> usize {
+    let conn=get_db(path);
+    conn.execute(
+        "DELETE FROM table_name WHERE where id = ?1",
+        (&id,),
+    ).unwrap()
+}
+
+pub fn findAll(path:Option<String>) -> anyhow::Result<Vec<Host>> {
     let conn=get_db(path);
 
     let mut stmt = conn.prepare("SELECT id, title, host,port,username,password,private_key FROM host").unwrap();
@@ -87,7 +94,4 @@ pub fn get_all_hosts(path:Option<String>) -> anyhow::Result<Vec<Host>> {
     anyhow::Ok(results)
 
 
-}
-pub fn get_version() -> String {
-    String::from("Hello from Rust! 🦀")
 }

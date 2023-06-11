@@ -9,13 +9,21 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class RustFfi {
-  Future<List<Host>> getAllHosts({String? path, dynamic hint});
+  Future<int> insert({String? path, required Host host, dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kGetAllHostsConstMeta;
+  FlutterRustBridgeTaskConstMeta get kInsertConstMeta;
 
-  Future<String> getVersion({dynamic hint});
+  Future<int> update({String? path, required Host host, dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kGetVersionConstMeta;
+  FlutterRustBridgeTaskConstMeta get kUpdateConstMeta;
+
+  Future<int> delete({String? path, required String id, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kDeleteConstMeta;
+
+  Future<List<Host>> findAll({String? path, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kFindAllConstMeta;
 }
 
 class Host {

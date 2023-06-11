@@ -26,37 +26,75 @@ class RustFfiImpl implements RustFfi {
   factory RustFfiImpl.wasm(FutureOr<WasmModule> module) =>
       RustFfiImpl(module as ExternalLibrary);
   RustFfiImpl.raw(this._platform);
-  Future<List<Host>> getAllHosts({String? path, dynamic hint}) {
+  Future<int> insert({String? path, required Host host, dynamic hint}) {
+    var arg0 = _platform.api2wire_opt_String(path);
+    var arg1 = _platform.api2wire_box_autoadd_host(host);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_insert(port_, arg0, arg1),
+      parseSuccessData: _wire2api_usize,
+      constMeta: kInsertConstMeta,
+      argValues: [path, host],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kInsertConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "insert",
+        argNames: ["path", "host"],
+      );
+
+  Future<int> update({String? path, required Host host, dynamic hint}) {
+    var arg0 = _platform.api2wire_opt_String(path);
+    var arg1 = _platform.api2wire_box_autoadd_host(host);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_update(port_, arg0, arg1),
+      parseSuccessData: _wire2api_usize,
+      constMeta: kUpdateConstMeta,
+      argValues: [path, host],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kUpdateConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "update",
+        argNames: ["path", "host"],
+      );
+
+  Future<int> delete({String? path, required String id, dynamic hint}) {
+    var arg0 = _platform.api2wire_opt_String(path);
+    var arg1 = _platform.api2wire_String(id);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_delete(port_, arg0, arg1),
+      parseSuccessData: _wire2api_usize,
+      constMeta: kDeleteConstMeta,
+      argValues: [path, id],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kDeleteConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "delete",
+        argNames: ["path", "id"],
+      );
+
+  Future<List<Host>> findAll({String? path, dynamic hint}) {
     var arg0 = _platform.api2wire_opt_String(path);
     return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_get_all_hosts(port_, arg0),
+      callFfi: (port_) => _platform.inner.wire_findAll(port_, arg0),
       parseSuccessData: _wire2api_list_host,
-      constMeta: kGetAllHostsConstMeta,
+      constMeta: kFindAllConstMeta,
       argValues: [path],
       hint: hint,
     ));
   }
 
-  FlutterRustBridgeTaskConstMeta get kGetAllHostsConstMeta =>
+  FlutterRustBridgeTaskConstMeta get kFindAllConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
-        debugName: "get_all_hosts",
+        debugName: "findAll",
         argNames: ["path"],
-      );
-
-  Future<String> getVersion({dynamic hint}) {
-    return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_get_version(port_),
-      parseSuccessData: _wire2api_String,
-      constMeta: kGetVersionConstMeta,
-      argValues: [],
-      hint: hint,
-    ));
-  }
-
-  FlutterRustBridgeTaskConstMeta get kGetVersionConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "get_version",
-        argNames: [],
       );
 
   void dispose() {
@@ -102,9 +140,18 @@ class RustFfiImpl implements RustFfi {
   Uint8List _wire2api_uint_8_list(dynamic raw) {
     return raw as Uint8List;
   }
+
+  int _wire2api_usize(dynamic raw) {
+    return castInt(raw);
+  }
 }
 
 // Section: api2wire
+
+@protected
+int api2wire_u32(int raw) {
+  return raw;
+}
 
 @protected
 int api2wire_u8(int raw) {
@@ -124,6 +171,13 @@ class RustFfiPlatform extends FlutterRustBridgeBase<RustFfiWire> {
   }
 
   @protected
+  ffi.Pointer<wire_Host> api2wire_box_autoadd_host(Host raw) {
+    final ptr = inner.new_box_autoadd_host_0();
+    _api_fill_to_wire_host(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
   ffi.Pointer<wire_uint_8_list> api2wire_opt_String(String? raw) {
     return raw == null ? ffi.nullptr : api2wire_String(raw);
   }
@@ -137,6 +191,21 @@ class RustFfiPlatform extends FlutterRustBridgeBase<RustFfiWire> {
 // Section: finalizer
 
 // Section: api_fill_to_wire
+
+  void _api_fill_to_wire_box_autoadd_host(
+      Host apiObj, ffi.Pointer<wire_Host> wireObj) {
+    _api_fill_to_wire_host(apiObj, wireObj.ref);
+  }
+
+  void _api_fill_to_wire_host(Host apiObj, wire_Host wireObj) {
+    wireObj.id = api2wire_String(apiObj.id);
+    wireObj.title = api2wire_String(apiObj.title);
+    wireObj.host = api2wire_String(apiObj.host);
+    wireObj.port = api2wire_u32(apiObj.port);
+    wireObj.username = api2wire_String(apiObj.username);
+    wireObj.password = api2wire_opt_String(apiObj.password);
+    wireObj.private_key = api2wire_opt_String(apiObj.privateKey);
+  }
 }
 
 // ignore_for_file: camel_case_types, non_constant_identifier_names, avoid_positional_boolean_parameters, annotate_overrides, constant_identifier_names
@@ -235,36 +304,92 @@ class RustFfiWire implements FlutterRustBridgeWireBase {
   late final _init_frb_dart_api_dl = _init_frb_dart_api_dlPtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>)>();
 
-  void wire_get_all_hosts(
+  void wire_insert(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> path,
+    ffi.Pointer<wire_Host> host,
+  ) {
+    return _wire_insert(
+      port_,
+      path,
+      host,
+    );
+  }
+
+  late final _wire_insertPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_Host>)>>('wire_insert');
+  late final _wire_insert = _wire_insertPtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_Host>)>();
+
+  void wire_update(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> path,
+    ffi.Pointer<wire_Host> host,
+  ) {
+    return _wire_update(
+      port_,
+      path,
+      host,
+    );
+  }
+
+  late final _wire_updatePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_Host>)>>('wire_update');
+  late final _wire_update = _wire_updatePtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_Host>)>();
+
+  void wire_delete(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> path,
+    ffi.Pointer<wire_uint_8_list> id,
+  ) {
+    return _wire_delete(
+      port_,
+      path,
+      id,
+    );
+  }
+
+  late final _wire_deletePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_delete');
+  late final _wire_delete = _wire_deletePtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_findAll(
     int port_,
     ffi.Pointer<wire_uint_8_list> path,
   ) {
-    return _wire_get_all_hosts(
+    return _wire_findAll(
       port_,
       path,
     );
   }
 
-  late final _wire_get_all_hostsPtr = _lookup<
+  late final _wire_findAllPtr = _lookup<
       ffi.NativeFunction<
           ffi.Void Function(
-              ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_get_all_hosts');
-  late final _wire_get_all_hosts = _wire_get_all_hostsPtr
+              ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_findAll');
+  late final _wire_findAll = _wire_findAllPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
-  void wire_get_version(
-    int port_,
-  ) {
-    return _wire_get_version(
-      port_,
-    );
+  ffi.Pointer<wire_Host> new_box_autoadd_host_0() {
+    return _new_box_autoadd_host_0();
   }
 
-  late final _wire_get_versionPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'wire_get_version');
-  late final _wire_get_version =
-      _wire_get_versionPtr.asFunction<void Function(int)>();
+  late final _new_box_autoadd_host_0Ptr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<wire_Host> Function()>>(
+          'new_box_autoadd_host_0');
+  late final _new_box_autoadd_host_0 = _new_box_autoadd_host_0Ptr
+      .asFunction<ffi.Pointer<wire_Host> Function()>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,
@@ -303,6 +428,23 @@ final class wire_uint_8_list extends ffi.Struct {
 
   @ffi.Int32()
   external int len;
+}
+
+final class wire_Host extends ffi.Struct {
+  external ffi.Pointer<wire_uint_8_list> id;
+
+  external ffi.Pointer<wire_uint_8_list> title;
+
+  external ffi.Pointer<wire_uint_8_list> host;
+
+  @ffi.Uint32()
+  external int port;
+
+  external ffi.Pointer<wire_uint_8_list> username;
+
+  external ffi.Pointer<wire_uint_8_list> password;
+
+  external ffi.Pointer<wire_uint_8_list> private_key;
 }
 
 typedef DartPostCObjectFnType = ffi.Pointer<

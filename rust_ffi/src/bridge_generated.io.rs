@@ -2,16 +2,31 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
-pub extern "C" fn wire_get_all_hosts(port_: i64, path: *mut wire_uint_8_list) {
-    wire_get_all_hosts_impl(port_, path)
+pub extern "C" fn wire_insert(port_: i64, path: *mut wire_uint_8_list, host: *mut wire_Host) {
+    wire_insert_impl(port_, path, host)
 }
 
 #[no_mangle]
-pub extern "C" fn wire_get_version(port_: i64) {
-    wire_get_version_impl(port_)
+pub extern "C" fn wire_update(port_: i64, path: *mut wire_uint_8_list, host: *mut wire_Host) {
+    wire_update_impl(port_, path, host)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_delete(port_: i64, path: *mut wire_uint_8_list, id: *mut wire_uint_8_list) {
+    wire_delete_impl(port_, path, id)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_findAll(port_: i64, path: *mut wire_uint_8_list) {
+    wire_findAll_impl(port_, path)
 }
 
 // Section: allocate functions
+
+#[no_mangle]
+pub extern "C" fn new_box_autoadd_host_0() -> *mut wire_Host {
+    support::new_leak_box_ptr(wire_Host::new_with_null_ptr())
+}
 
 #[no_mangle]
 pub extern "C" fn new_uint_8_list_0(len: i32) -> *mut wire_uint_8_list {
@@ -32,6 +47,25 @@ impl Wire2Api<String> for *mut wire_uint_8_list {
         String::from_utf8_lossy(&vec).into_owned()
     }
 }
+impl Wire2Api<Host> for *mut wire_Host {
+    fn wire2api(self) -> Host {
+        let wrap = unsafe { support::box_from_leak_ptr(self) };
+        Wire2Api::<Host>::wire2api(*wrap).into()
+    }
+}
+impl Wire2Api<Host> for wire_Host {
+    fn wire2api(self) -> Host {
+        Host {
+            id: self.id.wire2api(),
+            title: self.title.wire2api(),
+            host: self.host.wire2api(),
+            port: self.port.wire2api(),
+            username: self.username.wire2api(),
+            password: self.password.wire2api(),
+            private_key: self.private_key.wire2api(),
+        }
+    }
+}
 
 impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
     fn wire2api(self) -> Vec<u8> {
@@ -42,6 +76,18 @@ impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
     }
 }
 // Section: wire structs
+
+#[repr(C)]
+#[derive(Clone)]
+pub struct wire_Host {
+    id: *mut wire_uint_8_list,
+    title: *mut wire_uint_8_list,
+    host: *mut wire_uint_8_list,
+    port: u32,
+    username: *mut wire_uint_8_list,
+    password: *mut wire_uint_8_list,
+    private_key: *mut wire_uint_8_list,
+}
 
 #[repr(C)]
 #[derive(Clone)]
@@ -59,6 +105,26 @@ pub trait NewWithNullPtr {
 impl<T> NewWithNullPtr for *mut T {
     fn new_with_null_ptr() -> Self {
         std::ptr::null_mut()
+    }
+}
+
+impl NewWithNullPtr for wire_Host {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            id: core::ptr::null_mut(),
+            title: core::ptr::null_mut(),
+            host: core::ptr::null_mut(),
+            port: Default::default(),
+            username: core::ptr::null_mut(),
+            password: core::ptr::null_mut(),
+            private_key: core::ptr::null_mut(),
+        }
+    }
+}
+
+impl Default for wire_Host {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
     }
 }
 

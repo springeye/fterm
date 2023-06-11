@@ -9,7 +9,7 @@ import 'native.dart';
 Future<void> main(List<String> arguments) async {
   print("launch arguments==>$arguments");
   var n=NativeApi();
-  var list = await n.getAllHosts();
+  var list = await n.findAll();
   print("native api.getAllHosts()===>${list}");
   if (kDebugMode) Bloc.observer = _AppBlocObserver();
   AppRunner.run(

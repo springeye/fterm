@@ -21,27 +21,71 @@ use std::sync::Arc;
 
 // Section: wire functions
 
-fn wire_get_all_hosts_impl(port_: MessagePort, path: impl Wire2Api<Option<String>> + UnwindSafe) {
+fn wire_insert_impl(
+    port_: MessagePort,
+    path: impl Wire2Api<Option<String>> + UnwindSafe,
+    host: impl Wire2Api<Host> + UnwindSafe,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
-            debug_name: "get_all_hosts",
+            debug_name: "insert",
             port: Some(port_),
             mode: FfiCallMode::Normal,
         },
         move || {
             let api_path = path.wire2api();
-            move |task_callback| get_all_hosts(api_path)
+            let api_host = host.wire2api();
+            move |task_callback| Ok(insert(api_path, api_host))
         },
     )
 }
-fn wire_get_version_impl(port_: MessagePort) {
+fn wire_update_impl(
+    port_: MessagePort,
+    path: impl Wire2Api<Option<String>> + UnwindSafe,
+    host: impl Wire2Api<Host> + UnwindSafe,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
-            debug_name: "get_version",
+            debug_name: "update",
             port: Some(port_),
             mode: FfiCallMode::Normal,
         },
-        move || move |task_callback| Ok(get_version()),
+        move || {
+            let api_path = path.wire2api();
+            let api_host = host.wire2api();
+            move |task_callback| Ok(update(api_path, api_host))
+        },
+    )
+}
+fn wire_delete_impl(
+    port_: MessagePort,
+    path: impl Wire2Api<Option<String>> + UnwindSafe,
+    id: impl Wire2Api<String> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "delete",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_path = path.wire2api();
+            let api_id = id.wire2api();
+            move |task_callback| Ok(delete(api_path, api_id))
+        },
+    )
+}
+fn wire_findAll_impl(port_: MessagePort, path: impl Wire2Api<Option<String>> + UnwindSafe) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "findAll",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_path = path.wire2api();
+            move |task_callback| findAll(api_path)
+        },
     )
 }
 // Section: wrapper structs
@@ -67,6 +111,11 @@ where
     }
 }
 
+impl Wire2Api<u32> for u32 {
+    fn wire2api(self) -> u32 {
+        self
+    }
+}
 impl Wire2Api<u8> for u8 {
     fn wire2api(self) -> u8 {
         self
