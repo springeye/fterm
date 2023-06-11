@@ -166,3 +166,10 @@ flutter_gen:
 dependency_overrides:
   dartssh2:
     version: ^2.9.1-pre
+
+
+ffigen:
+  output: 'lib/generated_bindings.dart'
+  headers:
+    entry-points:
+      - 'rust_ffi/bind.h'

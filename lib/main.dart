@@ -5,12 +5,14 @@ import 'package:fterm/bootstrap/options.dart';
 import 'package:fterm/bootstrap/runner.dart';
 
 import 'native.dart';
+import 'native2.dart';
 
 Future<void> main(List<String> arguments) async {
   print("launch arguments==>$arguments");
-  var n=NativeApi();
-  var list = await n.findAll();
-  print("native api.getAllHosts()===>${list}");
+  // var n=NativeApi();
+  // var list = await n.findAll();
+  // print("native api.getAllHosts()===>${list}");
+  Native2Api().getConnect();
   if (kDebugMode) Bloc.observer = _AppBlocObserver();
   AppRunner.run(
     Launcher(),

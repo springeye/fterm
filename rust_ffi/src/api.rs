@@ -1,12 +1,22 @@
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, RwLock};
 pub use rusqlite::{Connection, Error, Result};
 use anyhow;
 use flutter_rust_bridge::{DartAbi, frb, RustOpaque};
 use flutter_rust_bridge::ffi::ffi::DartCObject;
-
-
-//
+use flutter_rust_bridge::support::lazy_static;
+#[no_mangle]
+pub extern "C" fn test()->Box<Connection>{
+    Box::new(Connection::open_in_memory().unwrap())
+}
+#[no_mangle]
+pub extern "C" fn test2(conn:Box<Connection>){
+    println!("print test2 by rust native");
+    let version:Result<String> =conn.query_row("PRAGMA cipher_version",[], |row| row.get(0));
+    let v=version.expect("当前数据平台不支持加密数据库");
+    println!("支持加密========>{}", v);
+}
 #[derive(Debug)]
+#[repr(C)]
 pub struct Host {
     pub id: String,
     pub title: String,

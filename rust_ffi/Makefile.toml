@@ -23,3 +23,22 @@ args = ["clean"]
 command = "cargo"
 args = ["build"]
 dependencies = ["generate"]
+
+[tasks.cbind]
+command="cbindgen"
+install_crate = {min_version = "0.24.3", crate_name = "cbindgen",  binary = "cbindgen", test_arg = "--help"}
+args = [
+    "--config",
+    "cbindgen.toml",
+    "--crate",
+    "rust_ffi",
+#    "src/lib.rs"
+    "--output",
+    "bind.h"
+]
+[tasks.dartffi]
+cwd='..'
+script_runner = "@shell"
+script='''
+fvm dart run ffigen
+'''
