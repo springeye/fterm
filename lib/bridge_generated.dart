@@ -28,16 +28,13 @@ class Column {
 
 class RustFfiImpl implements RustFfi {
   final RustFfiPlatform _platform;
-
   factory RustFfiImpl(ExternalLibrary dylib) =>
       RustFfiImpl.raw(RustFfiPlatform(dylib));
 
   /// Only valid on web/WASM platforms.
   factory RustFfiImpl.wasm(FutureOr<WasmModule> module) =>
       RustFfiImpl(module as ExternalLibrary);
-
   RustFfiImpl.raw(this._platform);
-
   Future<List<Column>> query({dynamic hint}) {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_query(port_),
@@ -57,7 +54,6 @@ class RustFfiImpl implements RustFfi {
   void dispose() {
     _platform.dispose();
   }
-
 // Section: wire2api
 
   String _wire2api_String(dynamic raw) {

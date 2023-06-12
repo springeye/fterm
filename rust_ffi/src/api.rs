@@ -1,24 +1,22 @@
-use std::collections::HashMap;
-use std::ffi::{c_char, CStr, CString};
-use std::io::{BufRead, BufReader, Write};
-use std::sync::{Arc, Mutex};
-use std::thread;
-use allo_isolate::ffi::DartCObject;
+use std::path::Path;
+use std::time;
 use allo_isolate::IntoDart;
-use dart_sys::{Dart_Port};
-use flutter_rust_bridge::rust2dart::Rust2Dart;
-use flutter_rust_bridge::{DartAbi, DartObject, DartSafe, opaque_dyn, RustOpaque};
-use portable_pty::{CommandBuilder, native_pty_system, PtyPair, PtySize};
-
+use flutter_rust_bridge::DartAbi;
+use rusqlite::{Connection, LoadExtensionGuard, backup,hooks};
+use rusqlite::ffi::sqlite3_update_hook;
+use anyhow::{Ok,Error};
+pub type Result<T, E = Error> = anyhow::Result<T, E>;
 pub type Channel = allo_isolate::Isolate;
 pub struct Column {
     pub name:String,
     pub value:DartAbi,
 }
-pub fn query()->Vec<Column>{
+pub  fn query() -> Result<Vec<Column>> {
+    let con=Connection::open_in_memory()?;
+    // con.update_hook(Some(callback));
     let mut results =Vec::new();
     results.push( Column{ name: "".to_string(), value: 123.into_dart() });
     results.push( Column{ name: "".to_string(), value: 123.into_dart() });
-    results
+    Ok(results)
 
 }

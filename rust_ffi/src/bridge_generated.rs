@@ -28,7 +28,7 @@ fn wire_query_impl(port_: MessagePort) {
             port: Some(port_),
             mode: FfiCallMode::Normal,
         },
-        move || move |task_callback| Ok(query()),
+        move || move |task_callback| query(),
     )
 }
 // Section: wrapper structs
