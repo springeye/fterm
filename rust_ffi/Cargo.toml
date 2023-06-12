@@ -9,8 +9,12 @@ crate-type = ["lib", "staticlib", "cdylib"]
 path = "src/lib.rs"
 
 [dependencies]
+allo-isolate = "0.1.17"
 anyhow = "1.0.71"
+dart-sys = "4.0.2"
 flutter_rust_bridge = "1.77.1"
+itertools = "0.10.5"
+portable-pty = { version = "0.8.1", features = ["serde", "serde_derive", "serde_support"] }
 rusqlite = { version = "0.29.0", features = ["bundled-sqlcipher"] }
 #sea-orm = { version = "0.11.3", features = ["sqlx-sqlite", "runtime-async-std-rustls"] }
 #rusqlite = { version = "0.29.0",features = ["bundled"]}

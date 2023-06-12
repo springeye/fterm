@@ -1,6 +1,5 @@
 [tasks.generate]
 dependencies = ["clean"]
-#flutter_rust_bridge_codegen --rust-input native/src/api.rs --dart-output lib/bridge_generated.dart --dart-decl-output lib/bridge_definitions.dart
 command="flutter_rust_bridge_codegen"
 install_crate = {min_version = "1.77.1", crate_name = "flutter_rust_bridge_codegen",  binary = "flutter_rust_bridge_codegen", test_arg = "--help"}
 args = [
@@ -12,8 +11,8 @@ args = [
 #    "../ios/Runner/bridge_generated.h",
 #    "--extra-c-output-path",
 #    "../macos/Runner/",
-    "--dart-decl-output",
-    "../lib/bridge_definitions.dart"
+#    "--dart-decl-output",
+#    "../lib/bridge_definitions.dart"
 ]
 [tasks.clean]
 command = "cargo"
