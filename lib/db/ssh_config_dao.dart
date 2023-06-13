@@ -15,5 +15,8 @@ abstract class SSHConfigDao {
   Future<SSHConfig?> findSSHConfigById(String id);
 
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> addSSHConfig(SSHConfig config);
+  Future<void> saveSSHConfig(SSHConfig config);
+
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<void> saveSSHConfigs(List<SSHConfig> config);
 }

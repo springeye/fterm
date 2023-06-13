@@ -162,7 +162,13 @@ class _$SSHConfigDao extends SSHConfigDao {
   }
 
   @override
-  Future<void> addSSHConfig(SSHConfig config) async {
+  Future<void> saveSSHConfig(SSHConfig config) async {
     await _sSHConfigInsertionAdapter.insert(config, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> saveSSHConfigs(List<SSHConfig> config) async {
+    await _sSHConfigInsertionAdapter.insertList(
+        config, OnConflictStrategy.replace);
   }
 }

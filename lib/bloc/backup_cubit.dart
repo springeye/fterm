@@ -19,21 +19,32 @@ part 'backup_state.dart';
 
 part 'backup_cubit.freezed.dart';
 
+const String _keyType = "backup_type";
+const String _keyConfig = "backup_config";
+
 @singleton
 class BackupCubit extends Cubit<BackupState> {
   final FlutterSecureStorage storage;
+  final MacOsOptions macOsOptions =
+      MacOsOptions.defaultOptions.copyWith(synchronizable: true);
 
   BackupCubit(this.storage)
       : super(const BackupState.initial(BackupType.disk, {}));
 
   Future<void> init() async {
     var type = await storage
-        .read(key: "backup_type")
+        .read(
+          key: _keyType,
+          mOptions: macOsOptions,
+        )
         .then((value) => value ?? "${BackupType.disk.index}")
         .then((value) => int.parse(value))
         .then((value) => BackupType.values[value]);
     var config = await storage
-        .read(key: "backup_config")
+        .read(
+          key: _keyConfig,
+          mOptions: macOsOptions,
+        )
         .then((value) => value ?? "{}")
         .then((value) => jsonDecode(value));
     emit(state.copyWith(type: type, config: config));
@@ -78,8 +89,26 @@ class BackupCubit extends Cubit<BackupState> {
   }
 
   Future<void> flush() async {
-    await storage.write(key: "backup_config", value: jsonEncode(state.config));
-    await storage.write(key: "backup_type", value: "${state.type.index}");
+    await storage.write(
+      key: _keyType,
+      value: "${state.type.index}",
+      mOptions: macOsOptions,
+    );
+
+    print("flush start: ${jsonEncode(state.config)}");
+    await storage.write(
+      key: _keyConfig,
+      value: jsonEncode(state.config),
+      mOptions: macOsOptions,
+    );
+    var config = await storage
+        .read(
+          key: _keyConfig,
+          mOptions: macOsOptions,
+        )
+        .then((value) => value ?? "{}")
+        .then((value) => jsonDecode(value));
+    print("flush end: ${jsonEncode(config)}");
   }
 
   Future<void> import() async {

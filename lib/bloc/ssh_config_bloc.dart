@@ -24,7 +24,7 @@ class SshConfigBloc extends Bloc<SshConfigEvent, SshConfigState> {
         emit(state.copyWith(configs: items));
       }, add: (e) async {
         var dao = getIt<SSHConfigDao>();
-        dao.addSSHConfig(e.config);
+        dao.saveSSHConfig(e.config);
         add(const SshConfigEvent.load());
       });
     });
@@ -43,9 +43,8 @@ class SshConfigBloc extends Bloc<SshConfigEvent, SshConfigState> {
 
   void import(String data) {
     var list = jsonDecode(String.fromCharCodes(base64Decode(data))) as List;
-    var items = list.map((e) => SSHConfig.fromJson(e));
-    for (var value in items) {
-      print(value.toString());
-    }
+    var items = list.map((e) => SSHConfig.fromJson(e)).toList();
+    var dao = getIt<SSHConfigDao>();
+    dao.saveSSHConfigs(items);
   }
 }

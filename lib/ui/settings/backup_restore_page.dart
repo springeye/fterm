@@ -59,6 +59,7 @@ class _FormState extends State<_Form> {
     return BlocBuilder<BackupCubit, BackupState>(
       builder: (context, state) {
         Map<String, dynamic> configs = HashMap.from(state.config);
+        print(jsonEncode(configs));
         return Scaffold(
           appBar: AppBar(
             actions: [
