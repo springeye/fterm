@@ -13,14 +13,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i4;
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
+import '../bloc/backup_cubit.dart' as _i8;
 import '../bloc/profiles_search_cubit.dart' as _i5;
 import '../bloc/ssh_config_bloc.dart' as _i6;
 import '../bootstrap/runner.dart' as _i3;
-import '../db/database.dart' as _i9;
-import '../db/ssh_config_dao.dart' as _i10;
-import '../service/sync_service.dart' as _i7;
-import '../service/webdav_sync_service.dart' as _i8;
-import 'register_modules.dart' as _i11;
+import '../db/database.dart' as _i7;
+import '../db/ssh_config_dao.dart' as _i9;
+import 'register_modules.dart' as _i10;
 
 extension GetItInjectableX on _i1.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -44,16 +43,16 @@ extension GetItInjectableX on _i1.GetIt {
       instanceName: 'encryptionKey',
       preResolve: true,
     );
-    gh.singleton<_i7.SyncService>(
-        _i8.WebDAVSyncService(gh<_i4.FlutterSecureStorage>())..init());
-    await gh.singletonAsync<_i9.AppDatabase>(
-      () => _i9.AppDatabase.from(gh<String>(instanceName: 'encryptionKey')),
+    await gh.singletonAsync<_i7.AppDatabase>(
+      () => _i7.AppDatabase.from(gh<String>(instanceName: 'encryptionKey')),
       preResolve: true,
     );
-    gh.singleton<_i10.SSHConfigDao>(
-        registerModule.provideSSHConfigDao(gh<_i9.AppDatabase>()));
+    gh.singleton<_i8.BackupCubit>(
+        _i8.BackupCubit(gh<_i4.FlutterSecureStorage>()));
+    gh.singleton<_i9.SSHConfigDao>(
+        registerModule.provideSSHConfigDao(gh<_i7.AppDatabase>()));
     return this;
   }
 }
 
-class _$RegisterModule extends _i11.RegisterModule {}
+class _$RegisterModule extends _i10.RegisterModule {}

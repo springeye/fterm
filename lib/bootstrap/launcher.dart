@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fterm/bloc/app_config_cubit.dart';
+import 'package:fterm/bloc/backup_cubit.dart';
 import 'package:fterm/bloc/profiles_search_cubit.dart';
 import 'package:fterm/di/di.dart';
 import 'package:statsfl/statsfl.dart';
@@ -29,6 +30,9 @@ class Launcher implements EntryPoint {
         ),
         BlocProvider(
           create: (context) => getIt<ProfilesSearchCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => getIt<BackupCubit>(),
         ),
       ],
       child: Builder(builder: (context) {

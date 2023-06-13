@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,9 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fterm/bloc/app_config_cubit.dart';
+import 'package:fterm/bloc/backup_cubit.dart';
 import 'package:fterm/di/di.dart';
+import 'package:fterm/model/backup_type.dart';
 import 'package:fterm/model/ssh_config.dart';
+import 'package:fterm/ui/widget/radio.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../bloc/ssh_config_bloc.dart';
@@ -24,7 +29,6 @@ class BackupRestorePage extends StatelessWidget with AppThemeData {
   Widget build(BuildContext context) {
     var configState = context.watch<AppConfigCubit>().state;
     var locale = configState.locale;
-
     var colors = context.watch<AppConfigCubit>().state.currentColor;
     return MaterialApp(
       localizationsDelegates: const [
@@ -37,56 +41,186 @@ class BackupRestorePage extends StatelessWidget with AppThemeData {
       locale: locale,
       debugShowCheckedModeBanner: false,
       theme: materialTheme(context, colors),
-      home: Scaffold(
-        body: Column(
-          children: [
-            MaterialButton(
-              onPressed: () {
-                var bloc = getIt<SshConfigBloc>();
-                bloc.export().then((content) async {
-                  var saveFile = await FilePicker.platform.saveFile(
-                    dialogTitle: "导出到...",
-                    fileName: "fterm_export.ft",
-                    initialDirectory: Platform.environment['HOME'] ??
-                        Platform.environment['USERPROFILE'],
-                  );
-                  if (saveFile != null) {
-                    File(saveFile).writeAsString(content).then((value) {
-                      EasyLoading.showSuccess("导出成功");
-                    }).catchError((e) {
-                      EasyLoading.showError("导出失败");
-                    });
-                  }
-                  return saveFile;
-                });
-              },
-              child: const Text("导出"),
+      home: _Form(),
+    );
+  }
+}
+
+class _Form extends StatefulWidget {
+  @override
+  State<_Form> createState() => _FormState();
+}
+
+class _FormState extends State<_Form> {
+  final GlobalKey<FormState> _globalKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BackupCubit, BackupState>(
+      builder: (context, state) {
+        Map<String, dynamic> configs = HashMap.from(state.config);
+        return Scaffold(
+          appBar: AppBar(
+            actions: [
+              IconButton(
+                  onPressed: () async {
+                    try {
+                      if (_globalKey.currentState?.validate() == true) {
+                        var bloc = getIt<BackupCubit>();
+                        await bloc.setConfig(configs);
+                        if (state.type == BackupType.webdav) {
+                          EasyLoading.show(status: 'Test webdav server...');
+                          var client = await bloc.getWebDAVClient();
+                          await client.ping();
+                        }
+                        await bloc.flush();
+                        EasyLoading.showSuccess("保存成功");
+                      }
+                    } catch (e) {
+                      EasyLoading.showError(e.toString());
+                    }
+                  },
+                  icon: const Icon(Icons.save))
+            ],
+          ),
+          body: Form(
+            key: _globalKey,
+            child: SizedBox(
+              width: 400,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 300,
+                    child: Row(
+                      children: [
+                        const Text("目的地: "),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: RadioFormGroup<BackupType>(
+                            state.type,
+                            items: const [
+                              RadioItem(
+                                BackupType.disk,
+                                title: Text("本地"),
+                              ),
+                              RadioItem(
+                                BackupType.webdav,
+                                title: Text("WebDAV"),
+                              ),
+                            ],
+                            onChanged: (v) async {
+                              var bloc = getIt<BackupCubit>();
+                              await bloc.setType(v!);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (state.type == BackupType.webdav)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TextFormField(
+                        initialValue: configs["host"],
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                          isDense: true,
+                          hintText: "https://example.com/backup/",
+                          border: const OutlineInputBorder(),
+                          labelText: "地址",
+                        ),
+                        onChanged: (v) {
+                          configs["host"] = v;
+                        },
+                      ),
+                    ),
+                  if (state.type == BackupType.webdav)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TextFormField(
+                        initialValue: configs["username"],
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                          isDense: true,
+                          hintText: "admin",
+                          border: const OutlineInputBorder(),
+                          labelText: "用户名",
+                        ),
+                        onChanged: (v) {
+                          configs["username"] = v;
+                        },
+                      ),
+                    ),
+                  if (state.type == BackupType.webdav)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TextFormField(
+                        initialValue: configs["password"],
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                          isDense: true,
+                          hintText: "test111",
+                          border: const OutlineInputBorder(),
+                          labelText: "密码",
+                        ),
+                        onChanged: (v) {
+                          configs["password"] = v;
+                        },
+                      ),
+                    ),
+                  Container(
+                    padding:
+                        const EdgeInsets.only(top: 20, right: 80, left: 50),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            getIt<BackupCubit>().export().then((value) {
+                              EasyLoading.showSuccess("导出成功");
+                            }).catchError((e) {
+                              EasyLoading.showSuccess("导出失败");
+                            });
+                          },
+                          child: const Text("导出"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            getIt<BackupCubit>().import().then((value) {
+                              EasyLoading.showSuccess("导入成功");
+                            }).catchError((e) {
+                              EasyLoading.showSuccess("导入失败");
+                            });
+                          },
+                          child: const Text("导入"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: const Text("注意：导入数据的时候，将会完成合并覆盖现有数据"),
+                  ),
+                ],
+              ),
             ),
-            MaterialButton(
-              onPressed: () async {
-                var bloc = getIt<SshConfigBloc>();
-                var file = (await FilePicker.platform.pickFiles(
-                  dialogTitle: "导出到...",
-                  allowedExtensions: ["ft"],
-                  initialDirectory: Platform.environment['HOME'] ??
-                      Platform.environment['USERPROFILE'],
-                ))
-                    ?.files
-                    .firstOrNull;
-                if (file != null) {
-                  File(file.path!).readAsString().then((baseContent) {
-                    bloc.import(baseContent);
-                    EasyLoading.showSuccess("导入成功");
-                  }).catchError((e) {
-                    EasyLoading.showError("导入失败");
-                  });
-                }
-              },
-              child: const Text("导入"),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

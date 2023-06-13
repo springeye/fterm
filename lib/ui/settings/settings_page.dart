@@ -6,7 +6,6 @@ import 'package:fterm/model/tab_item.dart';
 import 'package:fterm/ui/settings/backup_restore_page.dart';
 
 import '../../bloc/app_config_cubit.dart';
-import 'sync/sync_page.dart';
 import 'theme_page.dart';
 import 'general_page.dart';
 import 'hosts_page.dart';
