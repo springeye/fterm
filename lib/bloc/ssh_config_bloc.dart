@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fterm/db/ssh_config_dao.dart';
@@ -28,11 +30,22 @@ class SshConfigBloc extends Bloc<SshConfigEvent, SshConfigState> {
     });
   }
 
-  void import() {}
-
-  Future<List<SSHConfig>> export() async {
+  Future<List<SSHConfig>> _export() async {
     var dao = getIt<SSHConfigDao>();
     var configs = await dao.findAllSSHConfig();
     return configs;
+  }
+
+  Future<String> export() async {
+    var configs = await _export();
+    return base64Encode(jsonEncode(configs).codeUnits);
+  }
+
+  void import(String data) {
+    var list = jsonDecode(String.fromCharCodes(base64Decode(data))) as List;
+    var items = list.map((e) => SSHConfig.fromJson(e));
+    for (var value in items) {
+      print(value.toString());
+    }
   }
 }
