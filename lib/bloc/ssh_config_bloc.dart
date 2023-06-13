@@ -41,10 +41,11 @@ class SshConfigBloc extends Bloc<SshConfigEvent, SshConfigState> {
     return base64Encode(jsonEncode(configs).codeUnits);
   }
 
-  void import(String data) {
+  Future<void> import(String data) async {
     var list = jsonDecode(String.fromCharCodes(base64Decode(data))) as List;
     var items = list.map((e) => SSHConfig.fromJson(e)).toList();
     var dao = getIt<SSHConfigDao>();
-    dao.saveSSHConfigs(items);
+    await dao.saveSSHConfigs(items);
+    add(const SshConfigEvent.load());
   }
 }
