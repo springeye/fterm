@@ -27,4 +27,12 @@ class SshConfigBloc extends Bloc<SshConfigEvent, SshConfigState> {
       });
     });
   }
+
+  void import() {}
+
+  Future<List<SSHConfig>> export() async {
+    var dao = getIt<SSHConfigDao>();
+    var configs = await dao.findAllSSHConfig();
+    return configs;
+  }
 }

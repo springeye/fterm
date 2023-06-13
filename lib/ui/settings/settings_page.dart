@@ -1,7 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fterm/bloc/ssh_config_bloc.dart';
 import 'package:fterm/model/tab_item.dart';
+import 'package:fterm/ui/settings/backup_restore_page.dart';
 
 import '../../bloc/app_config_cubit.dart';
 import 'sync/sync_page.dart';
@@ -74,6 +76,14 @@ class _SettingPageState extends State<SettingPage> {
                   body: Container(
                     color: theme.background,
                     child: Text("coming soon!"),
+                  ),
+                ),
+                PaneItem(
+                  icon: const Icon(Icons.settings_backup_restore),
+                  title: const Text("备份和恢复"),
+                  body: Container(
+                    color: theme.background,
+                    child: const BackupRestorePage(),
                   ),
                 ),
               ],
