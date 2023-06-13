@@ -11,6 +11,9 @@ abstract class SSHConfigDao {
   @Query('SELECT * FROM SSHConfig')
   Future<List<SSHConfig>> findAllSSHConfig();
 
+  @Query('SELECT * FROM SSHConfig')
+  Stream<List<SSHConfig>> watchAllSSHConfig();
+
   @Query('SELECT * FROM SSHConfig WHERE id = :id')
   Future<SSHConfig?> findSSHConfigById(String id);
 

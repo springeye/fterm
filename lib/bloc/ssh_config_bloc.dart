@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fterm/db/ssh_config_dao.dart';
 import 'package:fterm/model/ssh_config.dart';
@@ -20,12 +21,12 @@ class SshConfigBloc extends Bloc<SshConfigEvent, SshConfigState> {
     on<SshConfigEvent>((event, emit) async {
       await event.map(load: (e) async {
         var dao = getIt<SSHConfigDao>();
-        var items = await dao.findAllSSHConfig();
-        emit(state.copyWith(configs: items));
+        await emit.forEach(dao.watchAllSSHConfig(), onData: (items) {
+          return state.copyWith(configs: items);
+        });
       }, add: (e) async {
         var dao = getIt<SSHConfigDao>();
         dao.saveSSHConfig(e.config);
-        add(const SshConfigEvent.load());
       });
     });
   }
@@ -46,6 +47,5 @@ class SshConfigBloc extends Bloc<SshConfigEvent, SshConfigState> {
     var items = list.map((e) => SSHConfig.fromJson(e)).toList();
     var dao = getIt<SSHConfigDao>();
     await dao.saveSSHConfigs(items);
-    add(const SshConfigEvent.load());
   }
 }

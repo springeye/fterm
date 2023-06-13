@@ -103,7 +103,7 @@ class _$SSHConfigDao extends SSHConfigDao {
   _$SSHConfigDao(
     this.database,
     this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
         _sSHConfigInsertionAdapter = InsertionAdapter(
             database,
             'SSHConfig',
@@ -118,7 +118,8 @@ class _$SSHConfigDao extends SSHConfigDao {
                   'passphrase': item.passphrase,
                   'authType': item.authType.index,
                   'jump_server': item.jumpServer
-                });
+                },
+            changeListener);
 
   final sqflite.DatabaseExecutor database;
 
@@ -142,6 +143,24 @@ class _$SSHConfigDao extends SSHConfigDao {
             passphrase: row['passphrase'] as String?,
             authType: AuthType.values[row['authType'] as int],
             jumpServer: row['jump_server'] as String?));
+  }
+
+  @override
+  Stream<List<SSHConfig>> watchAllSSHConfig() {
+    return _queryAdapter.queryListStream('SELECT * FROM SSHConfig',
+        mapper: (Map<String, Object?> row) => SSHConfig(
+            id: row['id'] as String,
+            title: row['title'] as String,
+            host: row['host'] as String,
+            port: row['port'] as int,
+            username: row['username'] as String,
+            password: row['password'] as String?,
+            privateKey: row['privateKey'] as String?,
+            passphrase: row['passphrase'] as String?,
+            authType: AuthType.values[row['authType'] as int],
+            jumpServer: row['jump_server'] as String?),
+        queryableName: 'SSHConfig',
+        isView: false);
   }
 
   @override
