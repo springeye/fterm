@@ -26,9 +26,9 @@ fn wire_query_impl(port_: MessagePort) {
         WrapInfo {
             debug_name: "query",
             port: Some(port_),
-            mode: FfiCallMode::Normal,
+            mode: FfiCallMode::Stream,
         },
-        move || move |task_callback| query(),
+        move || move |task_callback| Ok(query(task_callback.stream_sink())),
     )
 }
 // Section: wrapper structs
@@ -54,13 +54,6 @@ where
     }
 }
 // Section: impl IntoDart
-
-impl support::IntoDart for Column {
-    fn into_dart(self) -> support::DartAbi {
-        vec![self.name.into_dart(), self.value.into_dart()].into_dart()
-    }
-}
-impl support::IntoDartExceptPrimitive for Column {}
 
 // Section: executor
 

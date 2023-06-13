@@ -22,7 +22,7 @@ class Native2Api {
             ? DynamicLibrary.executable()
             : DynamicLibrary.open(_dylib));
 
-  Future<List<Column>> query() {
+  Stream<String> query() {
     return _api.query();
   }
 }

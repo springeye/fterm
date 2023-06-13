@@ -11,19 +11,9 @@ import 'package:uuid/uuid.dart';
 import 'dart:ffi' as ffi;
 
 abstract class RustFfi {
-  Future<List<Column>> query({dynamic hint});
+  Stream<String> query({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kQueryConstMeta;
-}
-
-class Column {
-  final String name;
-  final dynamic value;
-
-  const Column({
-    required this.name,
-    required this.value,
-  });
 }
 
 class RustFfiImpl implements RustFfi {
@@ -35,10 +25,10 @@ class RustFfiImpl implements RustFfi {
   factory RustFfiImpl.wasm(FutureOr<WasmModule> module) =>
       RustFfiImpl(module as ExternalLibrary);
   RustFfiImpl.raw(this._platform);
-  Future<List<Column>> query({dynamic hint}) {
-    return _platform.executeNormal(FlutterRustBridgeTask(
+  Stream<String> query({dynamic hint}) {
+    return _platform.executeStream(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_query(port_),
-      parseSuccessData: _wire2api_list_column,
+      parseSuccessData: _wire2api_String,
       constMeta: kQueryConstMeta,
       argValues: [],
       hint: hint,
@@ -58,24 +48,6 @@ class RustFfiImpl implements RustFfi {
 
   String _wire2api_String(dynamic raw) {
     return raw as String;
-  }
-
-  Column _wire2api_column(dynamic raw) {
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return Column(
-      name: _wire2api_String(arr[0]),
-      value: _wire2api_dartabi(arr[1]),
-    );
-  }
-
-  dynamic _wire2api_dartabi(dynamic raw) {
-    return raw;
-  }
-
-  List<Column> _wire2api_list_column(dynamic raw) {
-    return (raw as List<dynamic>).map(_wire2api_column).toList();
   }
 
   int _wire2api_u8(dynamic raw) {

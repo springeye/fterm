@@ -8,10 +8,6 @@ import 'native.dart';
 
 Future<void> main(List<String> arguments) async {
   print("launch arguments==>$arguments");
-  var api = Native2Api();
-
-  var rows = await api.query();
-  print(rows);
   if (kDebugMode) Bloc.observer = _AppBlocObserver();
   AppRunner.run(
     Launcher(),
