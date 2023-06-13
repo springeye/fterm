@@ -5,6 +5,7 @@ import 'package:floor/floor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:fterm/gen/assets.gen.dart';
+import 'package:fterm/model/backup_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/app_config_cubit.dart';
@@ -40,6 +41,13 @@ class InitDataTask extends LaunchTask {
     }
     getIt<SshConfigBloc>().add(const SshConfigEvent.load());
     getIt<ProfilesSearchCubit>().load();
-    getIt<BackupCubit>().init();
+    var cubit = getIt<BackupCubit>();
+    cubit.init().then((value) {
+      if(cubit.state.type==BackupType.webdav){
+        return cubit.import();
+      }
+    }).then((value) => cubit.export());
+
+
   }
 }
