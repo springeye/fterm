@@ -53,3 +53,9 @@ Related links:
 ## Special thanks to the following items which helped me a lot
 [https://github.com/TerminalStudio]()  
 [https://github.com/Eugeny/tabby]()
+
+
+# 给早餐加个鸡蛋
+
+![alipay](resources/alipay.jpg)
+![wx](resources/wx.jpg)
