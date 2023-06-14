@@ -12,7 +12,9 @@ jobs:
   build_macos:
     permissions:
       contents: write
-    runs-on: macos-latest
+#    runs-on: macos-latest
+    runs-on:
+      - self-hosted
     steps:
       # Setup
       - uses: actions/checkout@v3
