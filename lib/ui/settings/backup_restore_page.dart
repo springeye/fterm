@@ -13,6 +13,8 @@ import 'package:fterm/bloc/backup_cubit.dart';
 import 'package:fterm/di/di.dart';
 import 'package:fterm/model/backup_type.dart';
 import 'package:fterm/model/ssh_config.dart';
+import 'package:fterm/service/backup_restore_adapter.dart';
+import 'package:fterm/service/impl/webdav_backup_restore_adapter.dart';
 import 'package:fterm/ui/widget/radio.dart';
 import 'package:go_router/go_router.dart';
 
@@ -71,7 +73,8 @@ class _FormState extends State<_Form> {
                         await bloc.setConfig(configs);
                         if (state.type == BackupType.webdav) {
                           EasyLoading.show(status: 'Test webdav server...');
-                          var client = await bloc.getWebDAVClient();
+                          var client = await getIt<WebDAVBackupStoreAdapter>()
+                              .getWebDAVClient();
                           await client.ping();
                         }
                         await bloc.flush();

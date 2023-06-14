@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:fterm/gen/assets.gen.dart';
 import 'package:fterm/model/backup_type.dart';
+import 'package:fterm/service/impl/local_backup_restore_adapter.dart';
+import 'package:fterm/service/impl/webdav_backup_restore_adapter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/app_config_cubit.dart';
@@ -15,6 +17,7 @@ import '../../bloc/profiles_search_cubit.dart';
 import '../../bloc/ssh_config_bloc.dart';
 import '../../db/database.dart';
 import '../../di/di.dart';
+import '../../service/backup_restore_adapter.dart';
 import '../../ui/connector/local_connector.dart';
 import '../../ui/terminal_panel.dart';
 import '../runner.dart';
@@ -41,13 +44,13 @@ class InitDataTask extends LaunchTask {
     }
     getIt<SshConfigBloc>().add(const SshConfigEvent.load());
     getIt<ProfilesSearchCubit>().load();
-    var cubit = getIt<BackupCubit>();
-    cubit.init().then((value) {
-      if(cubit.state.type==BackupType.webdav){
-        return cubit.import();
-      }
-    }).then((value) => cubit.export());
-
-
+    var backup = getIt<BackupCubit>();
+    backup.registerAdapter(getIt<BackupStoreAdapter>(instanceName: "webdav"));
+    backup.registerAdapter(getIt<BackupStoreAdapter>(instanceName: "local"));
+    backup.init().then((value) {
+      return backup.import();
+    }).then((value) {
+      return backup.export();
+    });
   }
 }
