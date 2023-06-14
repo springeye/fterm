@@ -56,6 +56,5 @@ Related links:
 
 
 # 给早餐加个鸡蛋
-
-![alipay](resources/alipay.jpg)
-![wx](resources/wx.jpg)
+<img src="resources/alipay.jpg" width="200px"/>
+<img src="resources/wx.jpg" width="200px"/>
