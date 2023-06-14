@@ -1,0 +1,6 @@
+[submodule "windows/corrosion"]
+	path = windows/corrosion
+	url = https://github.com/corrosion-rs/corrosion.git
+[submodule "linux/corrosion"]
+	path = linux/corrosion
+	url = https://github.com/corrosion-rs/corrosion.git
