@@ -1,0 +1,42 @@
+[tasks.generate]
+command="flutter_rust_bridge_codegen"
+install_crate = {min_version = "1.77.1", crate_name = "flutter_rust_bridge_codegen",  binary = "flutter_rust_bridge_codegen", test_arg = "--help"}
+args = [
+    "--rust-input",
+    "src/api.rs",
+    "--dart-output",
+    "../lib/bridge_generated.dart",
+#    "--c-output",
+#    "../ios/Runner/bridge_generated.h",
+#    "--extra-c-output-path",
+#    "../macos/Runner/",
+#    "--dart-decl-output",
+#    "../lib/bridge_definitions.dart"
+]
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+dependencies = ["generate"]
+
+[tasks.cbind]
+command="cbindgen"
+install_crate = {min_version = "0.24.3", crate_name = "cbindgen",  binary = "cbindgen", test_arg = "--help"}
+args = [
+    "--config",
+    "cbindgen.toml",
+    "--crate",
+    "rust_ffi",
+#    "src/lib.rs"
+    "--output",
+    "bind.h"
+]
+[tasks.dartffi]
+cwd='..'
+script_runner = "@shell"
+script='''
+fvm dart run ffigen
+'''
