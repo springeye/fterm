@@ -10,7 +10,6 @@ on:
 #      - v*.*.*
 jobs:
   build_macos:
-    if: ${{ false }}
     permissions:
       contents: write
     runs-on: macos-latest
