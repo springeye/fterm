@@ -39,6 +39,12 @@ Visual Studio 2022 以上
 ```powershell
 scoop install openssl
 ```
+ 
+
+**问：为什么没有mac版本?**  
+答：因为本人没有钱，比较穷，买不起apple development证书！
+如果你需要mac版本，直接拉去代码到本地自己构建，直接flutter build macos就可以，无需其他配置
+
 
 Related links:
 1. [https://pub.dev/packages/flutter_secure_storage]()  
