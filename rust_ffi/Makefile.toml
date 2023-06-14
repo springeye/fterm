@@ -4,8 +4,17 @@ install_crate = {min_version = "1.77.1", crate_name = "flutter_rust_bridge_codeg
 args = [
     "--rust-input",
     "src/api.rs",
+    "src/webdav.rs",
     "--dart-output",
-    "../lib/bridge_generated.dart",
+    "../lib/gen/native_api.dart",
+    "../lib/gen/native_webdav.dart",
+    "--rust-output",
+    "src/generated_api.rs",
+    "src/generated_webdav.rs",
+    "--class-name",
+    "NativeApi",
+    "NativeWebDAV",
+    #"--no-use-bridge-in-method"
 #    "--c-output",
 #    "../ios/Runner/bridge_generated.h",
 #    "--extra-c-output-path",

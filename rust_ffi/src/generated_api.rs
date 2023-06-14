@@ -21,14 +21,17 @@ use std::sync::Arc;
 
 // Section: wire functions
 
-fn wire_query_impl(port_: MessagePort) {
+fn wire_hello_impl(port_: MessagePort, data: impl Wire2Api<String> + UnwindSafe) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
-            debug_name: "query",
+            debug_name: "hello",
             port: Some(port_),
-            mode: FfiCallMode::Stream,
+            mode: FfiCallMode::Normal,
         },
-        move || move |task_callback| Ok(query(task_callback.stream_sink())),
+        move || {
+            let api_data = data.wire2api();
+            move |task_callback| Ok(hello(api_data))
+        },
     )
 }
 // Section: wrapper structs
@@ -53,6 +56,13 @@ where
         (!self.is_null()).then(|| self.wire2api())
     }
 }
+
+impl Wire2Api<u8> for u8 {
+    fn wire2api(self) -> u8 {
+        self
+    }
+}
+
 // Section: impl IntoDart
 
 // Section: executor
@@ -62,7 +72,7 @@ support::lazy_static! {
 }
 
 #[cfg(not(target_family = "wasm"))]
-#[path = "bridge_generated.io.rs"]
+#[path = "generated_api.io.rs"]
 mod io;
 #[cfg(not(target_family = "wasm"))]
 pub use io::*;

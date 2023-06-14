@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fterm/api/native.dart';
+import 'package:fterm/gen/native_webdav.dart';
 import 'package:injectable/injectable.dart';
 import 'package:webdav_client/webdav_client.dart';
 
@@ -45,14 +47,26 @@ class WebDAVBackupStoreAdapter implements BackupStoreAdapter {
     return client;
   }
 
+  final n = NativeWebDAVImpl(dyn);
+
+  Future<DAVClient> getClient2() {
+    var state = getIt<BackupCubit>().state;
+    var config = state.config;
+    return n.newClient(
+      url: config['host']!,
+      username: config['username']!,
+      password: config['password']!,
+    );
+  }
+
   @override
   Future<void> export() {
     debugPrint("WebDAVBackupStoreAdapter.export");
     var bloc = getIt<SshConfigBloc>();
     return bloc.export().then((content) async {
-      var client = await getWebDAVClient();
+      var client = await getClient2();
       await client.write(
-          "fterm_export.ft", Uint8List.fromList(content.codeUnits));
+          path: "fterm_export.ft", data: Uint8List.fromList(content.codeUnits));
     });
   }
 
@@ -60,8 +74,8 @@ class WebDAVBackupStoreAdapter implements BackupStoreAdapter {
   Future<void> import() async {
     debugPrint("WebDAVBackupStoreAdapter.import");
     var bloc = getIt<SshConfigBloc>();
-    var client = await getWebDAVClient();
-    var content = await client.read("fterm_export.ft");
+    var client = await getClient2();
+    var content = await client.read(path: "fterm_export.ft");
     bloc.import(String.fromCharCodes(content));
   }
 

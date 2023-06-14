@@ -22,7 +22,6 @@ class ProfilesSearchCubit extends Cubit<ProfilesState> {
 
   @override
   Future<void> close() {
-    print("ProfilesSearchCubit.close");
     return super.close();
   }
 

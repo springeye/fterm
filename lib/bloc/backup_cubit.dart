@@ -75,7 +75,6 @@ class BackupCubit extends Cubit<BackupState> implements BackupStoreAdapter {
       mOptions: macOsOptions,
     );
 
-    print("flush start: ${jsonEncode(state.config)}");
     await storage.write(
       key: _keyConfig,
       value: jsonEncode(state.config),
@@ -88,13 +87,12 @@ class BackupCubit extends Cubit<BackupState> implements BackupStoreAdapter {
         )
         .then((value) => value ?? "{}")
         .then((value) => jsonDecode(value));
-    print("flush end: ${jsonEncode(config)}");
   }
 
   @override
   Future<void> export() async {
     for (var value in _backupAdapters) {
-      if(value.supportType==state.type){
+      if (value.supportType == state.type) {
         return await value.export();
       }
     }
@@ -103,7 +101,7 @@ class BackupCubit extends Cubit<BackupState> implements BackupStoreAdapter {
   @override
   Future<void> import() async {
     for (var value in _backupAdapters) {
-      if(value.supportType==state.type){
+      if (value.supportType == state.type) {
         return await value.import();
       }
     }
