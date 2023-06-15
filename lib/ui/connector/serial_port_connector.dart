@@ -27,6 +27,8 @@ class SerialPortConnector extends Connector {
       }
       _outputController.addStream(SerialPortReader(_port).stream);
       _stdinController.stream.listen(_port.write);
+      const oneSec = Duration(seconds: 1);
+      Timer.periodic(oneSec, (Timer t) => writeString("${t.tick}\n"));
     });
   }
 
