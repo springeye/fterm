@@ -2,8 +2,8 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
-pub extern "C" fn wire_hello(port_: i64, data: *mut wire_uint_8_list) {
-    wire_hello_impl(port_, data)
+pub extern "C" fn wire_hello(port_: i64, _data: *mut wire_uint_8_list) {
+    wire_hello_impl(port_, _data)
 }
 
 // Section: allocate functions

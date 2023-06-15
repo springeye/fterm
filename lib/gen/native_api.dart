@@ -108,17 +108,70 @@ class NativeApiWire implements FlutterRustBridgeWireBase {
           lookup)
       : _lookup = lookup;
 
-  void wire_test(
+  void wire_open(
     int port_,
+    ffi.Pointer<wire_uint_8_list> path,
+    int baud_rate,
+    int timeout_millis,
   ) {
-    return _wire_test(
+    return _wire_open(
       port_,
+      path,
+      baud_rate,
+      timeout_millis,
     );
   }
 
-  late final _wire_testPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_test');
-  late final _wire_test = _wire_testPtr.asFunction<void Function(int)>();
+  late final _wire_openPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Uint32, ffi.Uint64)>>('wire_open');
+  late final _wire_open = _wire_openPtr.asFunction<
+      void Function(int, ffi.Pointer<wire_uint_8_list>, int, int)>();
+
+  ffi.Pointer<wire_uint_8_list> new_uint_8_list_2(
+    int len,
+  ) {
+    return _new_uint_8_list_2(
+      len,
+    );
+  }
+
+  late final _new_uint_8_list_2Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_uint_8_list> Function(
+              ffi.Int32)>>('new_uint_8_list_2');
+  late final _new_uint_8_list_2 = _new_uint_8_list_2Ptr
+      .asFunction<ffi.Pointer<wire_uint_8_list> Function(int)>();
+
+  void drop_opaque_BoxSerialPort(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _drop_opaque_BoxSerialPort(
+      ptr,
+    );
+  }
+
+  late final _drop_opaque_BoxSerialPortPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+          'drop_opaque_BoxSerialPort');
+  late final _drop_opaque_BoxSerialPort = _drop_opaque_BoxSerialPortPtr
+      .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  ffi.Pointer<ffi.Void> share_opaque_BoxSerialPort(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _share_opaque_BoxSerialPort(
+      ptr,
+    );
+  }
+
+  late final _share_opaque_BoxSerialPortPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Void> Function(
+              ffi.Pointer<ffi.Void>)>>('share_opaque_BoxSerialPort');
+  late final _share_opaque_BoxSerialPort = _share_opaque_BoxSerialPortPtr
+      .asFunction<ffi.Pointer<ffi.Void> Function(ffi.Pointer<ffi.Void>)>();
 
   ffi.Pointer<wire_DAVClient> new_box_autoadd_dav_client_1() {
     return _new_box_autoadd_dav_client_1();
@@ -202,11 +255,11 @@ class NativeApiWire implements FlutterRustBridgeWireBase {
 
   void wire_hello(
     int port_,
-    ffi.Pointer<wire_uint_8_list> data,
+    ffi.Pointer<wire_uint_8_list> _data,
   ) {
     return _wire_hello(
       port_,
-      data,
+      _data,
     );
   }
 

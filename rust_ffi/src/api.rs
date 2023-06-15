@@ -1,3 +1,3 @@
-pub fn hello(data:String) {
+pub fn hello(_data:String) {
 
 }

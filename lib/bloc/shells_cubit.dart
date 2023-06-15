@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fterm/di/di.dart';
 import 'package:fterm/gen/assets.gen.dart';
+import 'package:fterm/utils/ext.dart';
 import 'package:injectable/injectable.dart';
 import '../api/native.dart';
 import '../db/ssh_config_dao.dart';
@@ -114,7 +116,13 @@ class ProfilesSearchCubit extends Cubit<ProfilesState> {
   final n = NativeSerialPortImpl(dyn);
 
   Future<List<SerialPortInfo>> _serialPorts() async {
-    var ports = await n.list();
+    var ports = SerialPort.availablePorts.map((address) {
+      var port = SerialPort(address);
+      return SerialPortInfo(
+        portName: address,
+        portType: port.type,
+      );
+    }).toList();
 
     return ports;
   }

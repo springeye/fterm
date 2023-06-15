@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -105,7 +106,17 @@ class _TtyPanelState extends State<TerminalPanel>
     terminal.onResize = (w, h, pw, ph) {
       connector.resize(h, w, pw, pw);
     };
-    _bindZModelHandle(connector.input, connector.output);
+    if (connector.isSupportZModel) {
+      _bindZModelHandle(connector.input, connector.output);
+    } else {
+      connector.output
+          .cast<List<int>>()
+          .transform(connector.decoder)
+          .listen(terminal.write);
+      terminal.onOutput = (data) {
+        connector.writeString(data);
+      };
+    }
   }
 
   _bindZModelHandle(StreamSink<Uint8List> stdin, Stream<Uint8List> stdout) {

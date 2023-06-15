@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -12,7 +13,7 @@ import 'connector.dart';
 class LocalConnector extends Connector {
   final Shell? shell;
 
-  LocalConnector({this.shell});
+  LocalConnector({this.shell}) : super(utf8.encoder, utf8.decoder);
 
   late Pty _pty;
 
@@ -82,7 +83,7 @@ class LocalConnector extends Connector {
   }
 
   @override
-  bool get isRemote => false;
+  bool get isSupportZModel => false;
 
   @override
   String get title => executable;
@@ -102,5 +103,10 @@ class LocalConnector extends Connector {
   @override
   Future<void> dispose() async {
     _pty.kill(ProcessSignal.sigkill);
+  }
+
+  @override
+  void writeString(String data) {
+    write(Uint8List.fromList(encoder.convert(data)));
   }
 }

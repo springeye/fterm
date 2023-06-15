@@ -1,5 +1,8 @@
-use flutter_rust_bridge::{frb};
+use std::time::Duration;
+use flutter_rust_bridge::{DartOpaque, frb, opaque_dyn, RustOpaque};
 pub use serialport::{SerialPortInfo, SerialPortType, UsbPortInfo};
+pub use serialport::SerialPort;
+
 #[frb(mirror(SerialPortInfo))]
 pub struct _SerialPortInfo{
     pub port_name:String,
@@ -36,3 +39,15 @@ pub fn list() -> Vec<SerialPortInfo> {
     let ports = serialport::available_ports().expect("No ports found!");
     ports
 }
+// #[frb]
+//  pub extern "C" fn open(path:String,
+//             #[frb(default = "115200")]
+//             baud_rate:u32,
+//             #[frb(default = "10")]
+//             timeout_millis:u64) -> Box<dyn SerialPort> {
+//     let port = serialport::new(path, baud_rate)
+//         .timeout(Duration::from_millis(timeout_millis))
+//         .open().expect("Failed to open port");
+//     return port;
+//
+// }

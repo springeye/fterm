@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
@@ -11,7 +12,7 @@ import 'package:fterm/ui/connector/connector.dart';
 class SSHConnector extends Connector {
   final SSHConfig config;
 
-  SSHConnector(this.config);
+  SSHConnector(this.config) : super(utf8.encoder, utf8.decoder);
 
   final _outputController = StreamController<Uint8List>();
   late SSHSession _session;
@@ -93,7 +94,7 @@ class SSHConnector extends Connector {
   }
 
   @override
-  bool get isRemote => true;
+  bool get isSupportZModel => true;
 
   @override
   String get title => config.title;
@@ -107,5 +108,10 @@ class SSHConnector extends Connector {
     _client.close();
     _jmpServer?.close();
     _outputController.close();
+  }
+
+  @override
+  void writeString(String data) {
+    write(Uint8List.fromList(encoder.convert(data)));
   }
 }

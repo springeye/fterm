@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fterm/gen/native_serial_port.dart';
 import 'package:fterm/ui/connector/connector.dart';
 import 'package:fterm/ui/connector/local_connector.dart';
+import 'package:fterm/ui/connector/serial_port_connector.dart';
 import 'package:fterm/ui/connector/ssh_connector.dart';
 
 import '../bloc/home_tab_bloc.dart';
@@ -207,7 +208,12 @@ class PopContent extends StatelessWidget {
       })),
       leading: const Icon(Icons.computer),
       onTap: () {
-        Navigator.pop(context);
+        bloc.add(
+          HomeTabEvent.add(
+            TerminalTab(e.portName, SerialPortConnector(e)),
+          ),
+        );
+        Navigator.pop(context, SerialPortConnector(e));
       },
     );
   }

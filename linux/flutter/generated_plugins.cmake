@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_linux
+  flutter_libserialport
   flutter_secure_storage_linux
   native_context_menu
   sqlcipher_flutter_libs
