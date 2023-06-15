@@ -247,6 +247,18 @@ class NativeWebDAVWire implements FlutterRustBridgeWireBase {
           lookup)
       : _lookup = lookup;
 
+  void wire_test(
+    int port_,
+  ) {
+    return _wire_test(
+      port_,
+    );
+  }
+
+  late final _wire_testPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_test');
+  late final _wire_test = _wire_testPtr.asFunction<void Function(int)>();
+
   void store_dart_post_cobject(
     DartPostCObjectFnType ptr,
   ) {

@@ -6,19 +6,27 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fterm/di/di.dart';
 import 'package:fterm/gen/assets.gen.dart';
 import 'package:injectable/injectable.dart';
+import '../api/native.dart';
 import '../db/ssh_config_dao.dart';
+import '../gen/native_serial_port.dart';
 import '../model/shell.dart';
 import '../model/ssh_config.dart';
 
-part 'profiles_search_state.dart';
+part 'shells_state.dart';
 
-part 'profiles_search_cubit.freezed.dart';
+part 'shells_cubit.freezed.dart';
 
 @singleton
 class ProfilesSearchCubit extends Cubit<ProfilesState> {
   ProfilesSearchCubit()
       : super(const ProfilesState.initial(
-            [Item.hosts("主机", true, []), Item.shells("本地", true, [])], "")) {}
+          [
+            Item.hosts("主机", true, []),
+            Item.shells("本地", true, []),
+            Item.serialPorts("串口", true, []),
+          ],
+          "",
+        )) {}
 
   @override
   Future<void> close() {
@@ -35,14 +43,21 @@ class ProfilesSearchCubit extends Cubit<ProfilesState> {
     var dao = getIt<SSHConfigDao>();
     var hosts = await dao.findAllSSHConfig();
     var shells = await _shells();
+    var ports = await _serialPorts();
     emit(state.copyWith(
       items: [
         ...state.items.map((e) {
-          return e.map(hosts: (item) {
-            return item.copyWith(hosts: hosts);
-          }, shells: (item) {
-            return item.copyWith(shells: shells);
-          });
+          return e.map(
+            hosts: (item) {
+              return item.copyWith(hosts: hosts);
+            },
+            shells: (item) {
+              return item.copyWith(shells: shells);
+            },
+            serialPorts: (item) {
+              return item.copyWith(ports: ports);
+            },
+          );
         })
       ],
     ));
@@ -94,5 +109,13 @@ class ProfilesSearchCubit extends Cubit<ProfilesState> {
 
   void search(String keyword) {
     emit(state.copyWith(keyword: keyword));
+  }
+
+  final n = NativeSerialPortImpl(dyn);
+
+  Future<List<SerialPortInfo>> _serialPorts() async {
+    var ports = await n.list();
+
+    return ports;
   }
 }

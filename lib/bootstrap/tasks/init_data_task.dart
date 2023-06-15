@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../bloc/app_config_cubit.dart';
 import '../../bloc/backup_cubit.dart';
 import '../../bloc/home_tab_bloc.dart';
-import '../../bloc/profiles_search_cubit.dart';
+import '../../bloc/shells_cubit.dart';
 import '../../bloc/ssh_config_bloc.dart';
 import '../../db/database.dart';
 import '../../di/di.dart';

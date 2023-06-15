@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fterm/bloc/app_config_cubit.dart';
 import 'package:fterm/bloc/backup_cubit.dart';
-import 'package:fterm/bloc/profiles_search_cubit.dart';
+import 'package:fterm/bloc/shells_cubit.dart';
 import 'package:fterm/di/di.dart';
 import 'package:statsfl/statsfl.dart';
 

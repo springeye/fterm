@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'profiles_search_cubit.dart';
+part of 'shells_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -254,6 +254,9 @@ mixin _$Item {
     required TResult Function(
             String header, bool isExpanded, List<Shell> shells)
         shells,
+    required TResult Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)
+        serialPorts,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -262,6 +265,9 @@ mixin _$Item {
         hosts,
     TResult? Function(String header, bool isExpanded, List<Shell> shells)?
         shells,
+    TResult? Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)?
+        serialPorts,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -270,6 +276,9 @@ mixin _$Item {
         hosts,
     TResult Function(String header, bool isExpanded, List<Shell> shells)?
         shells,
+    TResult Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)?
+        serialPorts,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -277,18 +286,21 @@ mixin _$Item {
   TResult map<TResult extends Object?>({
     required TResult Function(_Hosts value) hosts,
     required TResult Function(_Shells value) shells,
+    required TResult Function(_SerialPorts value) serialPorts,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Hosts value)? hosts,
     TResult? Function(_Shells value)? shells,
+    TResult? Function(_SerialPorts value)? serialPorts,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Hosts value)? hosts,
     TResult Function(_Shells value)? shells,
+    TResult Function(_SerialPorts value)? serialPorts,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -426,6 +438,9 @@ class _$_Hosts implements _Hosts {
     required TResult Function(
             String header, bool isExpanded, List<Shell> shells)
         shells,
+    required TResult Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)
+        serialPorts,
   }) {
     return hosts(header, isExpanded, this.hosts);
   }
@@ -437,6 +452,9 @@ class _$_Hosts implements _Hosts {
         hosts,
     TResult? Function(String header, bool isExpanded, List<Shell> shells)?
         shells,
+    TResult? Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)?
+        serialPorts,
   }) {
     return hosts?.call(header, isExpanded, this.hosts);
   }
@@ -448,6 +466,9 @@ class _$_Hosts implements _Hosts {
         hosts,
     TResult Function(String header, bool isExpanded, List<Shell> shells)?
         shells,
+    TResult Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)?
+        serialPorts,
     required TResult orElse(),
   }) {
     if (hosts != null) {
@@ -461,6 +482,7 @@ class _$_Hosts implements _Hosts {
   TResult map<TResult extends Object?>({
     required TResult Function(_Hosts value) hosts,
     required TResult Function(_Shells value) shells,
+    required TResult Function(_SerialPorts value) serialPorts,
   }) {
     return hosts(this);
   }
@@ -470,6 +492,7 @@ class _$_Hosts implements _Hosts {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Hosts value)? hosts,
     TResult? Function(_Shells value)? shells,
+    TResult? Function(_SerialPorts value)? serialPorts,
   }) {
     return hosts?.call(this);
   }
@@ -479,6 +502,7 @@ class _$_Hosts implements _Hosts {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Hosts value)? hosts,
     TResult Function(_Shells value)? shells,
+    TResult Function(_SerialPorts value)? serialPorts,
     required TResult orElse(),
   }) {
     if (hosts != null) {
@@ -595,6 +619,9 @@ class _$_Shells implements _Shells {
     required TResult Function(
             String header, bool isExpanded, List<Shell> shells)
         shells,
+    required TResult Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)
+        serialPorts,
   }) {
     return shells(header, isExpanded, this.shells);
   }
@@ -606,6 +633,9 @@ class _$_Shells implements _Shells {
         hosts,
     TResult? Function(String header, bool isExpanded, List<Shell> shells)?
         shells,
+    TResult? Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)?
+        serialPorts,
   }) {
     return shells?.call(header, isExpanded, this.shells);
   }
@@ -617,6 +647,9 @@ class _$_Shells implements _Shells {
         hosts,
     TResult Function(String header, bool isExpanded, List<Shell> shells)?
         shells,
+    TResult Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)?
+        serialPorts,
     required TResult orElse(),
   }) {
     if (shells != null) {
@@ -630,6 +663,7 @@ class _$_Shells implements _Shells {
   TResult map<TResult extends Object?>({
     required TResult Function(_Hosts value) hosts,
     required TResult Function(_Shells value) shells,
+    required TResult Function(_SerialPorts value) serialPorts,
   }) {
     return shells(this);
   }
@@ -639,6 +673,7 @@ class _$_Shells implements _Shells {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Hosts value)? hosts,
     TResult? Function(_Shells value)? shells,
+    TResult? Function(_SerialPorts value)? serialPorts,
   }) {
     return shells?.call(this);
   }
@@ -648,6 +683,7 @@ class _$_Shells implements _Shells {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Hosts value)? hosts,
     TResult Function(_Shells value)? shells,
+    TResult Function(_SerialPorts value)? serialPorts,
     required TResult orElse(),
   }) {
     if (shells != null) {
@@ -669,5 +705,190 @@ abstract class _Shells implements Item {
   @override
   @JsonKey(ignore: true)
   _$$_ShellsCopyWith<_$_Shells> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$_SerialPortsCopyWith<$Res> implements $ItemCopyWith<$Res> {
+  factory _$$_SerialPortsCopyWith(
+          _$_SerialPorts value, $Res Function(_$_SerialPorts) then) =
+      __$$_SerialPortsCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String header, bool isExpanded, List<SerialPortInfo> ports});
+}
+
+/// @nodoc
+class __$$_SerialPortsCopyWithImpl<$Res>
+    extends _$ItemCopyWithImpl<$Res, _$_SerialPorts>
+    implements _$$_SerialPortsCopyWith<$Res> {
+  __$$_SerialPortsCopyWithImpl(
+      _$_SerialPorts _value, $Res Function(_$_SerialPorts) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? header = null,
+    Object? isExpanded = null,
+    Object? ports = null,
+  }) {
+    return _then(_$_SerialPorts(
+      null == header
+          ? _value.header
+          : header // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == isExpanded
+          ? _value.isExpanded
+          : isExpanded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == ports
+          ? _value._ports
+          : ports // ignore: cast_nullable_to_non_nullable
+              as List<SerialPortInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$_SerialPorts implements _SerialPorts {
+  const _$_SerialPorts(
+      this.header, this.isExpanded, final List<SerialPortInfo> ports)
+      : _ports = ports;
+
+  @override
+  final String header;
+  @override
+  final bool isExpanded;
+  final List<SerialPortInfo> _ports;
+  @override
+  List<SerialPortInfo> get ports {
+    if (_ports is EqualUnmodifiableListView) return _ports;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_ports);
+  }
+
+  @override
+  String toString() {
+    return 'Item.serialPorts(header: $header, isExpanded: $isExpanded, ports: $ports)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_SerialPorts &&
+            (identical(other.header, header) || other.header == header) &&
+            (identical(other.isExpanded, isExpanded) ||
+                other.isExpanded == isExpanded) &&
+            const DeepCollectionEquality().equals(other._ports, _ports));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, header, isExpanded,
+      const DeepCollectionEquality().hash(_ports));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_SerialPortsCopyWith<_$_SerialPorts> get copyWith =>
+      __$$_SerialPortsCopyWithImpl<_$_SerialPorts>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(
+            String header, bool isExpanded, List<SSHConfig> hosts)
+        hosts,
+    required TResult Function(
+            String header, bool isExpanded, List<Shell> shells)
+        shells,
+    required TResult Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)
+        serialPorts,
+  }) {
+    return serialPorts(header, isExpanded, ports);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String header, bool isExpanded, List<SSHConfig> hosts)?
+        hosts,
+    TResult? Function(String header, bool isExpanded, List<Shell> shells)?
+        shells,
+    TResult? Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)?
+        serialPorts,
+  }) {
+    return serialPorts?.call(header, isExpanded, ports);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String header, bool isExpanded, List<SSHConfig> hosts)?
+        hosts,
+    TResult Function(String header, bool isExpanded, List<Shell> shells)?
+        shells,
+    TResult Function(
+            String header, bool isExpanded, List<SerialPortInfo> ports)?
+        serialPorts,
+    required TResult orElse(),
+  }) {
+    if (serialPorts != null) {
+      return serialPorts(header, isExpanded, ports);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Hosts value) hosts,
+    required TResult Function(_Shells value) shells,
+    required TResult Function(_SerialPorts value) serialPorts,
+  }) {
+    return serialPorts(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Hosts value)? hosts,
+    TResult? Function(_Shells value)? shells,
+    TResult? Function(_SerialPorts value)? serialPorts,
+  }) {
+    return serialPorts?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Hosts value)? hosts,
+    TResult Function(_Shells value)? shells,
+    TResult Function(_SerialPorts value)? serialPorts,
+    required TResult orElse(),
+  }) {
+    if (serialPorts != null) {
+      return serialPorts(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SerialPorts implements Item {
+  const factory _SerialPorts(final String header, final bool isExpanded,
+      final List<SerialPortInfo> ports) = _$_SerialPorts;
+
+  @override
+  String get header;
+  @override
+  bool get isExpanded;
+  List<SerialPortInfo> get ports;
+  @override
+  @JsonKey(ignore: true)
+  _$$_SerialPortsCopyWith<_$_SerialPorts> get copyWith =>
       throw _privateConstructorUsedError;
 }

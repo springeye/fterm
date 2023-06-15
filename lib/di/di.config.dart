@@ -14,7 +14,7 @@ import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
 import '../bloc/backup_cubit.dart' as _i11;
-import '../bloc/profiles_search_cubit.dart' as _i8;
+import '../bloc/shells_cubit.dart' as _i8;
 import '../bloc/ssh_config_bloc.dart' as _i9;
 import '../bootstrap/runner.dart' as _i3;
 import '../db/database.dart' as _i10;

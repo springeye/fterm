@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fterm/gen/native_serial_port.dart';
 import 'package:fterm/ui/connector/connector.dart';
 import 'package:fterm/ui/connector/local_connector.dart';
 import 'package:fterm/ui/connector/ssh_connector.dart';
 
 import '../bloc/home_tab_bloc.dart';
-import '../bloc/profiles_search_cubit.dart';
+import '../bloc/shells_cubit.dart';
 import '../di/di.dart';
 import '../model/shell.dart';
 import '../model/ssh_config.dart';
@@ -102,6 +103,23 @@ class PopContent extends StatelessWidget {
                               .toList(),
                         ),
                         isExpanded: e.isExpanded,
+                      ),
+                  serialPorts: (v) => ExpansionPanel(
+                        headerBuilder: (context, isExpanded) => ListTile(
+                          title: Text(v.header),
+                        ),
+                        body: Column(
+                          children: v.ports
+                              .toList()
+                              .where(
+                                (value) =>
+                                    state.keyword.trim().isEmpty ||
+                                    value.portName.contains(state.keyword),
+                              )
+                              .map((e) => _buildPort(e, bloc, context))
+                              .toList(),
+                        ),
+                        isExpanded: e.isExpanded,
                       ));
             }),
           ],
@@ -168,6 +186,28 @@ class PopContent extends StatelessWidget {
           ),
         );
         Navigator.pop(context, SSHConnector(e));
+      },
+    );
+  }
+
+  Widget _buildPort(SerialPortInfo e, HomeTabBloc bloc, BuildContext context) {
+    return ListTile(
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 30),
+      // leading: const Icon(Icons.settings),
+      title: Text(e.portName),
+      subtitle: Text(e.portType.map(usbPort: (v) {
+        return "USB";
+      }, pciPort: (v) {
+        return "pci";
+      }, bluetoothPort: (v) {
+        return "bt";
+      }, unknown: (v) {
+        return "unknown";
+      })),
+      leading: const Icon(Icons.computer),
+      onTap: () {
+        Navigator.pop(context);
       },
     );
   }

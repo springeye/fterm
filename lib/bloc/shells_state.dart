@@ -1,4 +1,4 @@
-part of 'profiles_search_cubit.dart';
+part of 'shells_cubit.dart';
 
 const freezed = Freezed(copyWith: true, equal: true);
 
@@ -23,4 +23,10 @@ class Item with _$Item {
     bool isExpanded,
     List<Shell> shells,
   ) = _Shells;
+
+  const factory Item.serialPorts(
+    String header,
+    bool isExpanded,
+    List<SerialPortInfo> ports,
+  ) = _SerialPorts;
 }
