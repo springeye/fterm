@@ -62,7 +62,8 @@ class SerialPortConnector extends Connector {
   }
 
   final _exitController = StreamController<int>();
-
+  @override
+  int? get minChunkSize => 1;
   @override
   Future<int> get exitCode => _exitController.stream.first;
   final _stdinController = StreamController<Uint8List>();

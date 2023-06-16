@@ -26,7 +26,7 @@ abstract class Connector {
   void resize(width, height, pixelWidth, pixelHeight);
 
   bool get isSupportZModel;
-
+  int? minChunkSize;
   String get title;
 
   Widget? get icon;

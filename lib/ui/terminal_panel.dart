@@ -22,7 +22,7 @@ import 'package:flutter_gen/gen_l10n/SS.dart';
 import 'connector/local_connector.dart';
 import 'connector/zmodem.dart';
 import 'dart:developer' as developer;
-
+import 'package:dartssh2/src/utils/stream.dart' show MinChunkSize;
 class TerminalTab extends TabItem {
   final Connector _connector;
 
@@ -109,7 +109,11 @@ class _TtyPanelState extends State<TerminalPanel>
     if (connector.isSupportZModel) {
       _bindZModelHandle(connector.input, connector.output);
     } else {
-      connector.output
+      var stream = connector.output;
+      if(connector.minChunkSize!=null){
+        stream=stream.transform(MinChunkSize(1));
+      }
+      stream
           .cast<List<int>>()
           .transform(connector.decoder)
           .listen(terminal.write);
