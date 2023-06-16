@@ -73,6 +73,7 @@ dependencies:
   sqlcipher_flutter_libs: ^0.5.6
   sqflite_common: ^2.4.5
   flutter_libserialport: ^0.3.0
+  fast_gbk: ^1.0.0
 
 dev_dependencies:
   flutter_test:

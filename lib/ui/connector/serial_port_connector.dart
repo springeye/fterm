@@ -6,21 +6,43 @@ import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:fterm/ui/connector/connector.dart';
-
+import 'package:fast_gbk/fast_gbk.dart';
 import '../../gen/native_serial_port.dart';
+import 'package:fast_gbk/fast_gbk.dart';
+
+class _E extends Converter<String, List<int>> {
+  @override
+  List<int> convert(String input) {
+    return input.codeUnits;
+  }
+}
+
+class _D extends Converter<List<int>, String> {
+  @override
+  String convert(List<int> input) {
+    return String.fromCharCodes(input);
+  }
+}
 
 class SerialPortConnector extends Connector {
   final SerialPortInfo port;
 
   SerialPortConnector(this.port)
       : _port = SerialPort(port.portName),
-        super(utf8.encoder, utf8.decoder);
+        super(const Utf8Encoder(), gbk.decoder);
   final SerialPort _port;
   final _outputController = StreamController<Uint8List>();
 
   @override
   Future<void> connect() {
-    _outputController.add(Uint8List.fromList(encoder.convert("正在打开串口...")));
+    // _outputController.add(Uint8List.fromList(encoder.convert("正在打开串口...")));
+    var config = SerialPortConfig();
+    config.bits = 8;
+    config.stopBits = 1;
+    config.xonXoff = 1;
+    config.rts = 1;
+
+    _port.config = config;
     return Future(() {
       if (!_port.openReadWrite()) {
         throw SerialPort.lastError ?? Exception("open port faild");
