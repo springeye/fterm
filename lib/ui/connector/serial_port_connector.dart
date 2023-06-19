@@ -10,26 +10,12 @@ import 'package:fast_gbk/fast_gbk.dart';
 import '../../gen/native_serial_port.dart';
 import 'package:fast_gbk/fast_gbk.dart';
 
-class _E extends Converter<String, List<int>> {
-  @override
-  List<int> convert(String input) {
-    return input.codeUnits;
-  }
-}
-
-class _D extends Converter<List<int>, String> {
-  @override
-  String convert(List<int> input) {
-    return String.fromCharCodes(input);
-  }
-}
-
 class SerialPortConnector extends Connector {
   final SerialPortInfo port;
 
   SerialPortConnector(this.port)
       : _port = SerialPort(port.portName),
-        super(const Utf8Encoder(), gbk.decoder);
+        super(const Utf8Encoder(), const Utf8Decoder(allowMalformed: true));
   final SerialPort _port;
   final _outputController = StreamController<Uint8List>();
 
@@ -41,7 +27,7 @@ class SerialPortConnector extends Connector {
     config.stopBits = 1;
     config.xonXoff = 1;
     config.rts = 1;
-
+    config.baudRate = 115200;
     _port.config = config;
     return Future(() {
       if (!_port.openReadWrite()) {
@@ -62,8 +48,10 @@ class SerialPortConnector extends Connector {
   }
 
   final _exitController = StreamController<int>();
+
   @override
   int? get minChunkSize => 1;
+
   @override
   Future<int> get exitCode => _exitController.stream.first;
   final _stdinController = StreamController<Uint8List>();
