@@ -8,6 +8,7 @@ import 'package:fterm/gen/assets.gen.dart';
 
 import '../../model/shell.dart';
 import 'connector.dart';
+import 'plugin.dart';
 
 class LocalConnector extends Connector {
   final Shell? shell;
@@ -103,4 +104,7 @@ class LocalConnector extends Connector {
   Future<void> dispose() async {
     _pty.kill(ProcessSignal.sigkill);
   }
+
+  @override
+  List<Plugin> get futures => [];
 }

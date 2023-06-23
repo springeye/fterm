@@ -7,6 +7,7 @@ import 'package:fterm/db/ssh_config_dao.dart';
 import 'package:fterm/di/di.dart';
 import 'package:fterm/model/ssh_config.dart';
 import 'package:fterm/ui/connector/connector.dart';
+import 'package:fterm/ui/connector/plugin.dart';
 
 class SSHConnector extends Connector {
   final SSHConfig config;
@@ -108,4 +109,7 @@ class SSHConnector extends Connector {
     _jmpServer?.close();
     _outputController.close();
   }
+
+  @override
+  List<Plugin> get futures => [Plugin.zModel];
 }

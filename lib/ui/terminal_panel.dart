@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fterm/bloc/app_config_cubit.dart';
+import 'package:fterm/ui/connector/plugin.dart';
 import 'package:path/path.dart' as path;
 import 'package:fterm/bloc/home_tab_bloc.dart';
 import 'package:fterm/di/di.dart';
@@ -105,7 +107,18 @@ class _TtyPanelState extends State<TerminalPanel>
     terminal.onResize = (w, h, pw, ph) {
       connector.resize(h, w, pw, pw);
     };
-    _bindZModelHandle(connector.input, connector.output);
+    if(connector.futures.contains(Plugin.zModel)){
+      _bindZModelHandle(connector.input, connector.output);
+    }else{
+      connector.output
+          .cast<List<int>>()
+          .transform(utf8.decoder)
+          .listen(terminal.write);
+      terminal.onOutput=(d){
+        connector.write(utf8.encoder.convert(d));
+      };
+    }
+
   }
 
   _bindZModelHandle(StreamSink<Uint8List> stdin, Stream<Uint8List> stdout) {

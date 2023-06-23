@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import 'plugin.dart';
+
 abstract class Connector {
   Stream<Uint8List> get output;
 
@@ -23,4 +25,5 @@ abstract class Connector {
   Widget? get icon;
 
   Future<void> dispose();
+  List<Plugin> get futures;
 }
