@@ -37,7 +37,7 @@ jobs:
         with:
           type: 'zip'
           filename: fterm-${{github.ref_name}}-macos.zip
-          directory: build/macos/Build/Products/Release/fterm.app
+          directory: "build/macos/Build/Products/Release/fterm.app"
       - name: MaoOS Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
