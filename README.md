@@ -54,7 +54,7 @@ Related links:
 [https://github.com/TerminalStudio]()  
 [https://github.com/Eugeny/tabby]()
 
-
+<!--
 # 给早餐加个鸡蛋
 <img src="resources/alipay.jpg" width="200px"/>
-<img src="resources/wx.jpg" width="200px"/>
+<img src="resources/wx.jpg" width="200px"/>-->
